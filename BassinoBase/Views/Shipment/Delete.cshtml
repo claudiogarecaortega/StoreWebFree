@@ -1,0 +1,66 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@model BassinoLibrary.ViewModels.ShipmentViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Delete, Resources.Shipment))
+}
+<script>
+    $(document).ready(function() {
+        $("#TotalKilos").prop('readonly', true);;
+        $("#TotalPakages").prop('readonly', true);
+        var d = @Html.Raw(Json.Encode(@Model.Cargars));
+
+        $.each(d, function(index, value) {
+            sumDataEdit(value);
+        });
+
+    });
+    function sumDataEdit(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Inbound/GetProductsPrice",
+            datatype: "JSON",
+            data: { text: id },
+            success: function (data) {
+                $('#tableInboud tbody').append('<tr id=item_' + data.id + '><td>' + data.description + '</td><td>' + data.measure + '</td><td>' + data.quantity + "</td></tr>");
+            }
+        });
+    }
+</script>
+<fieldset>
+
+	@Html.HiddenFor(model => model.Id)
+    @Html.PersonalDisplayFor(model => model.UbicationFrom)
+    @Html.PersonalDisplayFor(model => model.UbicationTo)
+    @Html.PersonalDisplayFor(model => model.Observations)
+    @Html.PersonalDisplayFor(model => model.TotalKilos)
+    @Html.PersonalDisplayFor(model => model.TotalPakages)
+    <div class="row">
+        <div class="col-xs-12 table-responsive">
+            <table class="table table-striped" id="tableInboud">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Medida</th>
+                        <th>Peso</th>
+
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+				
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesBorrarCancelar()
+}

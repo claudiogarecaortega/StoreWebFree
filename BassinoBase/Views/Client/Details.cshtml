@@ -1,0 +1,46 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@using Domain.Misc
+@using Domain.Users
+
+@model BassinoLibrary.ViewModels.ClientViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "ClientViewModel", Model.Id, string.Format("{0} {1}", Resources.Details,  ViewBag.title))
+}
+
+
+<fieldset>
+
+	@Html.HiddenFor(model => model.Id)
+    @Html.PersonalDisplayFor(model => model.Name)
+   
+        @Html.PersonalDisplayFor(model => model.DeliveryDirection)
+        @Html.PersonalDisplayFor(model => model.Neighborhood)
+        @Html.PersonalDisplayFor(model => model.Localidad)
+  
+  
+        @Html.PersonalDisplayFor(model => model.Ubication)
+        @Html.PersonalDisplayFor(model => model.Sequence)
+  
+   
+    @Html.PersonalDisplayFor(model => model.Direction)
+  
+  
+    @Html.PersonalDisplayFor(model => model.DocumentoIdentidad)
+    @Html.PersonalDisplayFor(model => model.NameContact)
+    @Html.PersonalDisplayFor(model => model.PhoneContact)
+    @Html.PersonalDisplayFor(model => model.MailContact)
+    @Html.PersonalDisplayFor(model => model.Description)
+
+
+
+</fieldset>
+
+

@@ -1,0 +1,29 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+<# if (Model.ModelNamespace != null) { #>
+using <#= Model.ModelNamespace #>;
+<# } #>
+using Persistence.Dao.Interfaces;
+using Persistence.UnitsOfWork;
+using Domain;
+using System.Linq;
+using Utils;
+
+namespace <#= Model.Namespace #>
+{ 
+    public class <#= Model.Name #> : Dao<<#= Model.ModelName #>>, I<#= Model.Name #>
+    {
+		
+		  public <#= Model.Name #>(IUnitOfWorkHelper unitOfWorkHelper, IActivatorWrapper activator)
+            : base(unitOfWorkHelper, activator)
+        {
+        }
+
+<# if (Model.ModelNamespace != null) { #>
+		protected override IQueryable<<#= Model.ModelName #>> SetFiltro(IQueryable<<#= Model.ModelName #>> modelos, string filtro)
+        {
+            return modelos.Where(modelo => modelo.Description.ToLower().Contains(filtro.ToLower()));
+        }
+<# } #>
+	}
+}

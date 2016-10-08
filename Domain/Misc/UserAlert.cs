@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Domain.Users;
+
+namespace Domain.Misc
+{
+    public class UserAlert
+    {
+        public int Id { get; set; }
+        public virtual UserExtended User { get; set; }
+        public virtual Alert Alert { get; set; }
+        public bool IsRead { get; set; }
+    }
+}

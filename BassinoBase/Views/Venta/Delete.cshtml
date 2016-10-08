@@ -1,0 +1,25 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.VentaViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Delete, "Venta"))
+}
+
+<fieldset>
+
+	@Html.PersonalDisplayFor(model => model.Secuencia)
+				
+	@Html.PersonalDisplayFor(model => model.Descripcion)
+				
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesBorrarCancelar()
+}

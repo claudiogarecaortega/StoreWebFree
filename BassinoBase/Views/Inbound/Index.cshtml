@@ -1,0 +1,437 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Interfaz.Controllers
+@using BassinoLibrary.ViewModels
+
+
+@*Helpers.BotonCreateUrl("Inbound/Create", "Crear Nueva Recepcion de Mercaderia", )*@
+
+<script>
+
+    $(document).ready(function() {
+        //  $("input[type=\"checkbox\"]").bootstrapSwitch();
+        $('#init').attr('checked', true);
+        $('#ModalAlert').on('hidden.bs.modal', '.modal', function () {
+            RefrescarGrilla();
+
+        });
+        sumarKilos();
+       
+        updateTitle("Recepcion de Mercaderia", "Gestion de Logistica");
+    });
+    function buscar() {
+        RefrescarGrilla();
+    }
+    function limpiar() {
+        $('#init').attr('checked', false);
+        $('#viaje').attr('checked', false);
+        $('#end').attr('checked', false);
+        $("#filterText").val("");
+        RefrescarGrilla();
+    }
+    function RefrescarGrilla() {
+        $(".k-grid").each(function () {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+    function cargasViaje() {
+        return {
+            idViaje: $("#idViaje").val(),
+            filtro: $("#filterText").val(),
+            viaje: $("#viaje").prop('checked'),
+        end: $("#end").prop('checked'),
+        init: $("#init").prop('checked')
+            // EmpresaID: $("#EmpresaID").val()
+        };
+    }
+    function checkUbication() {
+        var va = $("#idViaje").val();
+        $.ajax({
+            type: "POST",
+            url: "/Inbound/CheckUbications",
+            datatype: "JSON",
+            data: { text: va },
+            success: function (data) {
+             
+
+            }
+        });
+
+    }
+    function cargarViaje() {
+        var va = $("#idViaje").val();
+        $.ajax({
+            type: "POST",
+            url: "/Inbound/CheckUbications",
+            datatype: "JSON",
+            data: { text: va },
+            success: function (data) {
+                if(data.resultado){
+      
+        var truck = $("#truckId").val();
+        if (va != "0" && truck!="0") {
+            var url = 'Shipment/Create?data=' + va;
+            $.get(url, function (data) {
+                $('#modal').html(data);
+               
+             var kilo=   $("#kilosCreate").val();
+               var items= $("#itemsCreate").val();
+               $("#modal #itemsKilos").text(parseFloat(kilo).toFixed(2));
+               $("#modal #TotalPakages").val(items );
+               $("#modal #TotalKilos").val(parseFloat(kilo).toFixed(2) );
+                $("#modal #itemsCount").text( items );
+                $("#modal #Car").text(  $("#truckname").val() );
+                $("#modal #CarId").val(  $("#truckId").val() );
+              
+                $('#modal').modal({ backdrop: 'static', keyboard: false });
+              
+            });
+
+        } else {
+            alertWarnigButton("No puede Crear un viaje sin haber selecionado las Cargas o el camion");
+        }
+
+        }
+        else {
+                    alertWarnigButton(data.cuentas);
+        }
+            }
+        });
+    }
+    function createViaje() {
+       // debugger
+        var usoFisicoValor =parseFloat($("#usoFisicousado").val());
+        var usoFisicoValorCamion =parseFloat($("#usoFisicoId").val());
+        var kilosUsados =parseFloat($("#kilosMaximoCarUsado").val());
+        var kilosMaximoCamion =parseFloat($("#kilosMaximoCar").val());
+        var paletUsados =parseFloat($("#PaletMaximoCarUsado").val());
+        var paletMaximoCamion =parseFloat($("#PaletMaximoCar").val());
+        var va = $("#idViaje").val();
+        var valor = "";
+        if (va != "0") {
+            valor = va;
+        }
+
+        $('#GridInbound .k-selectable tr').each(function (i, row) {
+
+            // reference all the stuff you need first
+            var $row = $(row),
+                $family = $row.find('input[name*="viaje"]');
+            $kilos= $row.find('td[name*="kilositem"]');
+            $usoFisic = $row.find('td[name*="usoFisicoItem"]');
+            var id = $family[0].id;
+            var idUsoFisico = $usoFisic[0].id;
+            var idKilos = $kilos[0].id;
+            if ($family[0].checked) {
+                valor = valor + "-" + $("#" + id).val();
+                usoFisicoValor=usoFisicoValor+parseFloat($("#" + idUsoFisico).text().replace(',','.'));
+                kilosUsados = kilosUsados + parseFloat($("#" + idKilos).text().replace(',', '.')); 
+            }
+
+
+        });
+        if (usoFisicoValor <= usoFisicoValorCamion) {
+            if (kilosUsados <= kilosMaximoCamion) {
+                if (valor == "") {
+                    alertWarnigButton("Debe selecionar al menos una carga para proceder con la carga del viaje");
+                } else {
+                    $("#idViaje").val(valor);
+                    $("#usoFisicousado").val(usoFisicoValor);
+                    $("#kilosMaximoCarUsado").val(kilosUsados);
+                    RefrescarGrilla();
+                }
+            } else {
+                alertWarnigButton("El peso de las cargas no debe exceder la capacidad de kilos del Camion");
+            }
+        }
+        else
+        { alertWarnigButton("El Uso Fisico de las cargas no debe exceder la capacidad del Camion");}
+       
+
+    }
+    function activateButtons() {
+        $("#divBotones").hide();    
+
+    }
+    function sumarKilos() {
+        var valor = 0;
+        var usoFisicoValor = 0;
+        var contador = 0;
+        //var va = $("#idViaje").val();
+        //$.ajax({
+        //    type: "POST",
+        //    url: "/Inbound/KilosTotales",
+        //    datatype: "JSON",
+        //    data: { text: va },
+        //    success: function (data) {
+        //        valor = data.resultado;
+        //        usoFisicoValor = data.usuFisico;
+        //        contador = data.contador;
+        //    }
+        //    });
+        
+       
+        //bultosLabel
+       
+        $('#GridInbound .k-selectable tr').each(function (i, row) {
+
+            // reference all the stuff you need first
+            var $row = $(row),
+                $family = $row.find('td[name*="kilositem"]');
+            $usoFisic = $row.find('td[name*="usoFisicoItem"]');
+            $chec = $row.find('input[name*="viaje"]');
+            var idviaje = $chec[0].id;
+            var id = $family[0].id;
+            var idUsoFisico = $usoFisic[0].id;
+            if (!$("#" + idviaje).is(':disabled'))
+                valor = valor + parseFloat($("#" + id).text().replace(',','.'));
+
+            usoFisicoValor=usoFisicoValor+parseFloat($("#" + idUsoFisico).text().replace(',','.'));
+            contador = contador + 1;
+
+        });
+        $("#kilosLabel").text("Kilos Totales: " + valor.toFixed(2));
+        $("#usoFisicoLabel").text("Total Uso Fisico: " + usoFisicoValor.toFixed(2));
+        $("#bultosLabel").text("Bultos Totales: " + contador);
+
+    }
+    function sumarKilosGrid2() {
+        var valor = 0;
+        var usoFisicoValor = 0;
+        //bultosLabel
+        var contador = 0;
+        var va = $("#idViaje").val();
+        $.ajax({
+            type: "POST",
+            url: "/Inbound/KilosTotales",
+            datatype: "JSON",
+            data: { text: va },
+            success: function (data) {
+                valor = data.resultado;
+                usoFisicoValor = data.usoFisico;
+                contador = data.contador;
+                $("#kilosLabel2").text("Kilos Totales: " + valor.toFixed(2));
+                $("#bultosLabel2").text("Cargas Disponibles: " + contador);
+                $("#usoFisicoLabel2").text("Total Uso Fisico: " + usoFisicoValor.toFixed(2));
+                $("#kilosCreate").val(valor);
+                $("#itemsCreate").val(contador);
+            }
+        });
+        //var rowCount = $('#GridInbound2 .k-selectable tr').length;
+        //if (rowCount > 0) {
+        //    $('#GridInbound2 .k-selectable tr').each(function (i, row) {
+
+        //        // reference all the stuff you need first
+        //        var $row = $(row),
+        //            $family = $row.find('td[name*="kilositem"]');
+        //        $usoFisic = $row.find('td[name*="usoFisicoItem"]');
+        //        $chec = $row.find('input[name*="viaje"]');
+        //        var idviaje = $chec[0].id;
+        //        var idUsoFisico = $usoFisic[0].id;
+        //        var id = $family[0].id;
+        //        if (!$("#" + idviaje).is(':disabled'))
+        //            valor = valor + parseFloat($("#" + id).text().replace(',','.'));
+
+        //        usoFisicoValor=usoFisicoValor+parseFloat($("#" + idUsoFisico).text().replace(',','.'));
+        //        contador = contador + 1;
+
+        //    });
+        //}
+       
+
+    }
+    function descreateViaje() {
+        var usoFisicoValor = parseFloat($("#usoFisicousado").val());
+        var usoFisicoValorCamion =parseFloat($("#usoFisicoId").val());
+        var kilosUsados =parseFloat($("#kilosMaximoCarUsado").val());
+        var kilosMaximoCamion =parseFloat($("#kilosMaximoCar").val());
+        var paletUsados =parseFloat($("#PaletMaximoCarUsado").val());
+        var paletMaximoCamion =parseFloat($("#PaletMaximoCar").val());
+        var va = $("#idViaje").val();
+        var valor = "";
+        if (va != "0") {
+
+            var bandera = false;
+            valor = "";
+            $('#GridInbound2 .k-selectable tr').each(function (i, row) {
+
+                // reference all the stuff you need first
+                var $row = $(row),
+                    $family = $row.find('input[name*="viaje"]');
+                $kilos= $row.find('td[name*="kilositem"]');
+                $usoFisic = $row.find('td[name*="usoFisicoItem"]');
+                var id = $family[0].id;
+                var idUsoFisico = $usoFisic[0].id;
+                var idKilos = $kilos[0].id;
+                if (!$family[0].checked) {
+                    valor = valor + "-" + $("#" + id).val();
+
+                   
+                } else {
+                    usoFisicoValor = usoFisicoValor - parseFloat($("#" + idUsoFisico).text().replace(',', '.')); 
+                    kilosUsados = kilosUsados - parseFloat($("#" + idKilos).text().replace(',', '.')); 
+                    bandera = true;
+                }
+
+
+            });
+            if (!bandera) {
+                alertWarnigButton("No puede descargar mercaderia si no ha selecionado ninguna");
+            } else {
+                $("#idViaje").val(valor);
+                $("#usoFisicousado").val(usoFisicoValor);
+                $("#kilosMaximoCarUsado").val(kilosUsados);
+                RefrescarGrilla();
+            }
+        }
+        else { alertWarnigButton("No puede Descargar Mercaderia que si no se agrego las mismas"); }
+    }
+    function onDataBound(arg) {
+        sumarKilos();
+
+    }
+    function onDataBoundGrid2(arg) {
+        sumarKilosGrid2();
+
+    }
+    function getTruckInfo(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Car/GetCarInfo",
+            datatype: "JSON",
+            data: { text: id },
+            success: function (data) {
+                var mesage = "El vehiculo seleccionado es: " + data.name + "  tiene un uso fisico maximo de: " + data.usoFisico + " y un maximo de Kilos de : "+data.kilos+" Con patetente N° " + data.patente;
+                $("#camionLabel").text(mesage);
+                $("#usoFisicoId").val(data.usoFisico);
+                $("#kilosMaximoCar").val(data.kilos);
+                $("#PaletMaximoCar").val(data.palet);
+                $("#truckname").val(data.name);
+
+            }
+        });
+    }
+    function getval(sel) {
+        
+        $("#truckId").val(sel.value);
+        //getTruckInfo()
+        getTruckInfo($("#truckId").val());
+    }
+</script>
+<input type="hidden" name="idViaje" id="idViaje" value="0">
+<input type="hidden" name="truckId" id="truckId" value="0">
+<input type="hidden" name="usoFisicoId" id="usoFisicoId" value="0">
+<input type="hidden" name="kilosMaximoCar" id="kilosMaximoCar" value="0">
+<input type="hidden" name="PaletMaximoCar" id="PaletMaximoCar" value="0">
+<input type="hidden" name="PaletMaximoCarUsado" id="PaletMaximoCarUsado" value="0">
+<input type="hidden" name="kilosMaximoCarUsado" id="kilosMaximoCarUsado" value="0">
+<input type="hidden" name="usoFisicousado" id="usoFisicousado" value="0">
+<input type="hidden" name="truckname" id="truckname" value="0">
+@Helpers.BuscadorStatus()
+@Helpers.BotonesActionesInbound(ViewBag.crear, ViewBag.editar, ViewBag.borrar, ViewBag.ver, ViewBag.cargar, "Inbound", ViewBag.camiones)
+@(Html.KendoGrid().Grid<InboundViewModel, InboundController>(GridDetailsMode.None)
+    .Name("GridInbound")
+     .Scrollable(scr => scr.Height("auto"))
+
+    .Columns(columns =>
+    {
+        columns.Template(@<text></text>).Width(50).ClientTemplate("").Title("Viaje");
+        columns.Template(@<text></text>).Width(70).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>").Title("Acciones");
+        columns.Bound(p => p.Secuencia).Template(@<text></text>).Title("N° de Ingreso");
+        columns.Bound(p => p.DateIn).Template(@<text></text>).Title("Fecha de Ingreso");
+        columns.Bound(p => p.ClientOrigen).Template(@<text></text>).Title(" Origen");
+
+        columns.Bound(p => p.ClientTo).Template(@<text></text>).Title(" Destino");
+        columns.Bound(p => p.Kilos).Template(@<text></text>).Title(" Kilos");
+        columns.Bound(p => p.UsoFisico).Template(@<text></text>).Title(" Uso Fisico");
+    
+        columns.Bound(p => p.Description).Template(@<text></text>).Title(" Comentarios").HtmlAttributes(new { @style = "overflow: visible;" });
+        // columns.Template(@<text></text>).HtmlAttributes(new { @class = "acciones" }).Width(150).ClientTemplate(@Html.Partial("_GridAcctions").ToString())
+        //      .HtmlAttributes(new { @style = "overflow: visible;" });
+
+    }).ClientRowTemplate("<tr style='#= Status =='green' ? \"background-color: green ;\" : Status =='yellow' ? \"background-color: yellow ;\":\"\" #' data-uid='#= uid #'>" +
+                                                        "<td data-uid='#= uid #'><input type='checkbox' '#= Status =='green' ? \" disabled \" : Status =='yellow' ? \" disabled \":\"\" #'  name='viaje' class='chkbx' value='#= id #' id='_#= id #'/></td>" +
+                             "<td><input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/></td>" +
+                    "<td>#: Secuencia #</td>" +
+                                            "<td >#: DateIn #</td>" +
+                                            "<td >#: ClientOrigen #</td>" +
+                                            "<td >#: ClientTo #</td>" +
+                                                    "<td name='kilositem' id='kilosItem_#= id #'>#: Kilos #</td>" +
+                                                            "<td name='usoFisicoItem' id='usoFisicoItem_#= id #'>#: UsoFisico #</td>" +
+                                                    "<td >#: Description #</td>" +
+        //"<td  class='acciones' style='overflow: visible;'>" + @Html.Partial("_GridAcctions").ToString() + "</td>" +
+                                      "</tr>")
+        // .EditarBorrar((bool)ViewBag.editar, (bool)ViewBag.borrar) style='#= IsUsed == true ? \"background-color: green;\" : \"\" #'
+            .DataSource(dataSource => dataSource
+                .Ajax()
+
+                .Model(conf => conf.Id(model => model.Id))
+                .PageSize(10)
+                            .Read(read => read.Action("GridInfoCargas", "Inbound").Data("cargasViaje"))
+                    ).Events(events => events.DataBound("onDataBound"))
+)
+<div class="color-palette-set" style="width: 100%;padding-bottom: 15px;display: inline-flex;">
+    <div style="margin-right: 10px; background-color: white; font-weight: bold;"><span>Mercaderia Pendiente Despachar</span></div>
+    <div style="margin-right: 10px; background-color: yellow; font-weight: bold;"><span>Mercaderia en Transito</span></div>
+    <div style="margin-right: 10px; background-color: green; font-weight: bold;"><span>Mercaderia Finalizada. </span></div>
+    <div style="margin-right: 10px; font-weight: bold; float: right; margin-left: auto;"><span id="bultosLabel">Mercaderia en conformidad y está finalizado </span></div>
+    <div style="margin-right: 10px; font-weight: bold; float: right; margin-left: auto;"><span id="kilosLabel">Mercaderia en conformidad y está finalizado </span></div>
+    <div style="margin-right: 10px; font-weight: bold; float: right; margin-left: auto;"><span id="usoFisicoLabel">Mercaderia en conformidad y está finalizado </span></div>
+</div>
+
+<h2>Elementos para el Viaje</h2>
+@Helpers.BotonesActionesInboundViaje(ViewBag.crearViaje, true, "Inbound")
+<div class="list-group" id="divBotones">
+    <div style="margin-right: 10px; color: green; font-weight: bold;" id="camionLabel"><span> </span></div>
+</div>
+
+
+@(Html.KendoGrid().Grid<InboundViewModel, InboundController>(GridDetailsMode.None)
+    .Name("GridInbound2")
+     .Scrollable(scr => scr.Height("auto"))
+
+    .Columns(columns =>
+    {
+        columns.Template(@<text></text>).Width(50).ClientTemplate("").Title("Viaje");
+        columns.Bound(p => p.Secuencia).Template(@<text></text>).Title("N° de Ingreso");
+        columns.Bound(p => p.DateIn).Template(@<text></text>).Title("Fecha de Ingreso");
+        columns.Bound(p => p.ClientOrigen).Template(@<text></text>).Title(" Origen");
+        
+        columns.Bound(p => p.ClientTo).Template(@<text></text>).Title(" Destino");
+        columns.Bound(p => p.Kilos).Template(@<text></text>).Title(" Kilos");
+        columns.Bound(p => p.UsoFisico).Template(@<text></text>).Title(" Uso Fisico");
+        columns.Bound(p => p.Description).Template(@<text></text>).Title(" Comentarios").HtmlAttributes(new { @style = "overflow: visible;" });
+        // columns.Template(@<text></text>).HtmlAttributes(new { @class = "acciones" }).Width(150).ClientTemplate(@Html.Partial("_GridAcctions").ToString())
+        //      .HtmlAttributes(new { @style = "overflow: visible;" });
+
+    }).ClientRowTemplate("<tr data-uid='#= uid #'>" +
+                                     "<td data-uid='#= uid #'><input type='checkbox' name='viaje' class='chkbx' value='#= id #' id='v_#= id #'/></td>" +
+
+                "<td>#: Secuencia #</td>" +
+                                        "<td >#: DateIn #</td>" +
+                                        "<td >#: ClientOrigen #</td>" +
+                                        "<td >#: ClientTo #</td>" +
+                                                 "<td name='kilositem' id='kilosItem_#= id #'>#: Kilos #</td>" +
+                                                     "<td name='usoFisicoItem' id='usoFisicoItem_#= id #'>#: UsoFisico #</td>" +
+                                                "<td >#: Description #</td>" +
+        //"<td  class='acciones' style='overflow: visible;'>" + @Html.Partial("_GridAcctions").ToString() + "</td>" +
+                                  "</tr>")
+        // .EditarBorrar((bool)ViewBag.editar, (bool)ViewBag.borrar) style='#= IsUsed == true ? \"background-color: green;\" : \"\" #'
+        .DataSource(dataSource => dataSource
+            .Ajax()
+
+            .Model(conf => conf.Id(model => model.Id))
+            .PageSize(10)
+                            .Read(read => read.Action("GridInfoCrearViaje", "Inbound").Data("cargasViaje"))
+            ).Events(events => events.DataBound("onDataBoundGrid2"))
+)
+<div class="color-palette-set" style="width: 100%; padding-bottom: 15px; display: inline-flex;">
+    <input type="hidden" id="kilosCreate" value="0">
+    <input type="hidden" id="itemsCreate" value="0">
+    <div style="margin-right: 10px; font-weight: bold; float: right; margin-left: auto;"><span id="bultosLabel2">Mercaderia en conformidad y está finalizado </span></div>
+    <div style="margin-right: 10px; font-weight: bold; float: right; margin-left: auto;"><span id="kilosLabel2">Mercaderia en conformidad y está finalizado </span></div>
+    <div style="margin-right: 10px; font-weight: bold; float: right; margin-left: auto;"><span id="usoFisicoLabel2">Mercaderia en conformidad y está finalizado </span></div>
+</div>

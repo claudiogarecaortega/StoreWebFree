@@ -1,0 +1,50 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Interfaz.Controllers
+@using BassinoLibrary.ViewModels
+@*Helpers.BotonCreateUrl("Client/CreateOrigen", "Crear Origen", (bool)ViewBag.crear, (bool)ViewBag.imprimir, "Imprimir Todos los Origenes", "Report/PrintAllClientsOrigen")*@
+
+<script>
+
+    $(document).ready(function() {
+        $("#filterText").keyup(function(e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        updateTitle("Origen", "Gestion General");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+
+</script>
+@Helpers.Buscador()
+@Helpers.BotonesAcctionClient((bool)ViewBag.crear, "CreateOrigen", ViewBag.editar, ViewBag.borrar, ViewBag.ver, "Client", "EditOrigen")
+@(Html.KendoGrid().Grid<ClientViewModel, ClientController>(GridDetailsMode.None)
+    .Name("GridClientDestino")
+    .Columns(columns =>
+    {
+        columns.Template(@<text></text>).Width(50).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>");
+        columns.Bound(p => p.Secuencia).Template(@<text></text>).Title("N° de Origen").Width(100);
+        columns.Bound(p => p.Name).Template(@<text></text>).Title("Razon Social");
+        columns.Bound(p => p.Alias).Template(@<text></text>).Title("Alias");
+        columns.Bound(p => p.NameContact);
+        columns.Bound(p => p.PhoneContact);
+        columns.Bound(p => p.MailContact);
+        @*columns.Template(@<text></text>).HtmlAttributes(new { @class = "acciones" }).Width(300).ClientTemplate(@Html.Partial("_GridAcctionsOrigen").ToString())
+              .HtmlAttributes(new { @style = "overflow: visible;" });*@
+	    })
+	
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(conf => conf.Id(model => model.Id))
+        .PageSize(20)
+                .Read(read => read.Action("GridInfoOrigen", "Client").Data("additionalParameters"))
+    )
+)

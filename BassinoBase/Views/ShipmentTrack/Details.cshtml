@@ -1,0 +1,20 @@
+@using Interfaz.Library.Resourses
+@model BassinoLibrary.ViewModels.ShipmentTrackViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "ShipmentTrackViewModel", Model.Id, string.Format("{0} {1}", Resources.Details, Resources.ShipmentTrackViewModel))
+}
+
+
+<fieldset>
+
+	@Html.PersonalDisplayFor(model => model.Description)
+
+</fieldset>
+
+

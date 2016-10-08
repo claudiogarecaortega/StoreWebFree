@@ -1,0 +1,59 @@
+﻿@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@model BassinoLibrary.ViewModels.RolesModuleViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "AddRol";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, Resources.Roles))
+}
+
+<fieldset>
+
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model=>model.ModuleNameId)
+    @Html.HiddenFor(model=>model.RolNameId)
+    @Html.PersonalSEditorFor(model => model.RolName)
+    @Html.PersonalSEditorFor(model => model.ModuleName)
+    <div class="checkbox">
+        @{
+            int i = 0;
+            foreach (var action in ViewBag.Actions)
+            {
+
+                <label>
+                    @if (Model.Actions!=null && Model.Actions.Any())
+                    {
+                        string ac = action.Description;
+                        if (Model.Actions.Contains(ac) )
+                        {
+                            <input type="checkbox" id="@action.Description" name="@action.Description" checked="checked">
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="@action.Description" name="@action.Description">
+                        }
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="@action.Description" name="@action.Description">
+                    }
+
+
+                    @action.Description
+                </label>
+           
+            }
+        }
+    </div>
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

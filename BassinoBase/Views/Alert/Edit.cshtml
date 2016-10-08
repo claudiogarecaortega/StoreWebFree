@@ -1,0 +1,138 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Kendo.Mvc.UI
+
+@model BassinoLibrary.ViewModels.AlertViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Edit, Resources.Alert))
+}
+<script>
+    $(document).ready(function () {
+        $("input[type=\"radio\"]").bootstrapSwitch();
+        $("input[type=\"checkbox\"]").bootstrapSwitch();
+    });
+    $(function () {
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        // CKEDITOR.replace('editor1');
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
+    });
+</script>
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.HiddenFor(model => model.Id)
+    @Html.PersonalSEditorFor(model => model.Description)
+    <div class="form-group">
+        @Html.LabelFor(model => model.IsForAll)
+        <div class="form-group">
+            @if (Model.IsForAll)
+            {
+                <input data-val="true" data-val-required="The Es para todos los Usuarios? field is required." data-on-text="Si" data-off-text="No" id="IsForAll" name="IsForAll" data-on-color="success" data-off-color="danger" type="checkbox" value="true"checked="checked">
+            }
+            else
+            {
+                <input data-val="true" data-val-required="The Es para todos los Usuarios? field is required." data-on-text="Si" data-off-text="No" id="IsForAll" name="IsForAll" data-on-color="success" data-off-color="danger" type="checkbox" value="true">
+            }
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Importance)
+        <div class="form-group">
+            @switch (Model.Importance)
+            {
+                case 1:
+                    {
+                        <input type="radio" name="Importance" value="1" checked data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="danger" data-off-color="danger" data-label-text="Urgente" class="switch-radio2">
+                        <input type="radio" name="Importance" value="2"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="warning" data-off-color="warning" data-label-text="Medio" class="switch-radio2">
+                        <input type="radio" name="Importance" value="3"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="info" data-off-color="info" data-label-text="Normal" class="switch-radio2">
+                        <input type="radio" name="Importance" value="4"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="success" data-off-color="success" data-label-text="Baja" class="switch-radio2">
+                        break;
+                    }
+                case 2:
+                    {
+                        <input type="radio" name="Importance" value="1" data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="danger" data-off-color="danger" data-label-text="Urgente" class="switch-radio2">
+                        <input type="radio" name="Importance" value="2" checked data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="warning" data-off-color="warning" data-label-text="Medio" class="switch-radio2">
+                        <input type="radio" name="Importance" value="3"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="info" data-off-color="info" data-label-text="Normal" class="switch-radio2">
+                        <input type="radio" name="Importance" value="4"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="success" data-off-color="success" data-label-text="Baja" class="switch-radio2">
+                        break;
+                    }
+                case 3:
+                    {
+                        <input type="radio" name="Importance" value="1"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="danger" data-off-color="danger" data-label-text="Urgente" class="switch-radio2">
+                        <input type="radio" name="Importance" value="2"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="warning" data-off-color="warning" data-label-text="Medio" class="switch-radio2">
+                        <input type="radio" name="Importance" value="3" checked data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="info" data-off-color="info" data-label-text="Normal" class="switch-radio2">
+                        <input type="radio" name="Importance" value="4"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="success" data-off-color="success" data-label-text="Baja" class="switch-radio2">
+                        break;
+                    }
+                case 4:
+                    {
+                        <input type="radio" name="Importance" value="1"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="danger" data-off-color="danger" data-label-text="Urgente" class="switch-radio2">
+                        <input type="radio" name="Importance" value="2"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="warning" data-off-color="warning" data-label-text="Medio" class="switch-radio2">
+                        <input type="radio" name="Importance" value="3"  data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="info" data-off-color="info" data-label-text="Normal" class="switch-radio2">
+                        <input type="radio" name="Importance" value="4" checked data-on-text="Si" data-off-text="No" data-radio-all-off="false" data-on-color="success" data-off-color="success" data-label-text="Baja" class="switch-radio2">
+                        break;
+                    }
+            }
+           
+        </div>
+    </div>
+    @(Html.Kendo().MultiSelect()
+                                          .Name("UsersAlert")
+                                  .DataTextField("Name")
+                                  .DataValueField("id")
+                                  .Placeholder("Seleccione los usuarios...")
+                                  .AutoBind(false)
+                                  .Events(x => x.Select(@<text>
+                                    function(e) {
+
+                                    }
+                                </text>))
+                                  .Events(x => x.Change(@<text>
+        function (e) {
+
+
+        }
+                                </text>))
+            //.Value(new[] { new { ProductName = "Chang", ProductID = 2 }, new { ProductName = "Uncle Bob's Organic Dried Pears", ProductID = 7 } })
+                                                .DataSource(source =>
+                                                {
+                                                    source.Read(read =>
+                                                    {
+                                                        read.Action("GetUsers", "Messaging");
+                                                    })
+                                                        .ServerFiltering(true);
+                                                })
+    )
+
+
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Descripcion Completa <small></small></h3>
+            <!-- tools box -->
+            <div class="pull-right box-tools">
+                <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
+
+            </div><!-- /. tools -->
+        </div><!-- /.box-header -->
+        <div class="box-body pad">
+            <textarea class="textarea" name="Html" id="Html" placeholder="Ingrese el texto" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">@Model.Html</textarea>
+
+        </div>
+    </div>
+
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

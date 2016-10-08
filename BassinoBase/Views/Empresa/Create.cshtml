@@ -1,0 +1,26 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.EmpresaViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, Resources.Empresa))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.PersonalSEditorFor(model => model.Description)
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

@@ -1,0 +1,38 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.CarViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Delete, "Vehiculo"))
+}
+
+<fieldset>
+
+
+    @Html.HiddenFor(model => model.Id)
+    @Html.PersonalDisplayFor(model => model.Nombre)
+    @Html.PersonalDisplayFor(model => model.Description)
+    @Html.PersonalDisplayFor(model => model.Patente)
+    @Html.PersonalDisplayFor(model => model.UsoFisico)
+    @Html.PersonalDisplayFor(model => model.KiloMaximo)
+    @Html.PersonalDisplayFor(model => model.PalletMaximo)
+    @Html.PersonalDisplayFor(model => model.Senasa)
+    @Html.PersonalDisplayFor(model => model.Senada)
+    @Html.PersonalDisplayFor(model => model.Seguro)
+    @Html.PersonalDisplayFor(model => model.Poliza)
+    @Html.PersonalDisplayFor(model => model.DueDate)
+    @Html.PersonalDisplayFor(model => model.UrgenciPhone)
+    @Html.PersonalDisplayFor(model => model.Itv)
+    @Html.PersonalDisplayFor(model => model.DueDateItv)
+    @Html.PersonalDisplayFor(model => model.CarPhone)
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesBorrarCancelar()
+}

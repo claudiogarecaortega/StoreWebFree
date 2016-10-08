@@ -1,0 +1,37 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@using Domain.Misc
+@model BassinoLibrary.ViewModels.ProviderViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "ProviderViewModel", Model.Id, string.Format("{0} {1}", Resources.Details, Resources.Provider))
+}
+
+
+<fieldset>
+
+	@Html.HiddenFor(model => model.Id)
+
+    @Html.PersonalDisplayFor(model => model.Name)
+    @Html.PersonalDisplayFor(model => model.Direction)
+    @Html.PersonalDisplayFor(model => model.Ubication)
+    
+
+
+    @Html.PersonalDisplayFor(model => model.ZipCode)
+    @Html.PersonalDisplayFor(model => model.Contact)
+    @Html.PersonalDisplayFor(model => model.TaxCondition)
+    
+    @Html.PersonalDisplayFor(model => model.IiBb)
+    @Html.PersonalDisplayFor(model => model.Cuit)
+    @Html.PersonalDisplayFor(model => model.Description)
+
+</fieldset>
+
+

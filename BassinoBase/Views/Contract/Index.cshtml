@@ -1,0 +1,47 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+
+@using BassinoLibrary.ViewModels
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@using BassinoLibrary.ViewModels
+
+
+@Helpers.BotonCreateUrl("modelName/Create", "Crear Nuevo modelName",true)
+
+<script>
+
+    $(document).ready(function() {
+        $("#Buscar").keyup(function(e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        updateTitle("Contratos", "Gestion General");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+
+</script>
+@Helpers.BotonesActiones(ViewBag.crear, ViewBag.editar, ViewBag.borrar, ViewBag.ver, "Contract")
+@(Html.KendoGrid().Grid<ContractViewModel, ContractController>()
+    .Name("GridContract")
+    .Columns(columns =>
+    {
+        columns.Template(@<text></text>).Width(50).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>");
+			columns.Bound(p => p.Description);
+	    })
+	.EditarBorrar(true,true)
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(conf => conf.Id(model => model.Id))
+        .PageSize(10)
+        .Read(read => read.Action("GridInfo", "Contract"))
+    )
+)

@@ -1,0 +1,105 @@
+@using BassinoBase.Models
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@using Domain.Users
+@using Kendo.Mvc.UI
+
+@model BassinoLibrary.ViewModels.MessagingViewModel
+
+<script>
+    $(function () {
+        // Reference the auto-generated proxy for the hub.
+        var chat = $.connection.noficationsHub;
+        // Create a function that the hub can call back to display messages.
+      $.connection.hub.start().done(function () {
+           $('#sendEmail').click(function () {
+           
+               // Call the Send method on the hub.
+               var is=$("#UserReciverId").val();
+              // $('#sendEmail').submit();
+               chat.server.send(is);
+                // Clear text box and reset focus for next comment.
+
+            });
+        });
+    });
+
+</script>
+<div class="modal-dialog" id="modal-dialog">
+    <div class="modal-content">
+
+        <div id="headModal" class="modal-header">
+            <div class="box-header">
+                <i class="fa fa-envelope"></i>
+                <h3 class="box-title">Enviar Mensaje Interno</h3>
+                <!-- tools box -->
+                <div class="pull-right box-tools">
+                    <button class="btn btn-info btn-sm" data-widget="remove" data-dismiss="modal"  title="Remove"><i class="fa fa-times"></i></button>
+                </div><!-- /. tools -->
+            </div>
+           
+        </div>
+        <div id="bodyModal" class="modal-body">
+
+
+            <div>
+              
+                <div class="box-body">
+                   @using (Ajax.BeginForm("Create", "Messaging", null, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "modal", OnBegin = "block();", OnComplete = "unBlock();" },
+                    new { @role = "form", @id = "MessagingForm"}))
+                    {
+                       @Html.ValidationSummary(true)
+                        <div class="form-group">
+                            @Html.LabelFor(m=>m.UserReciverId)
+                            @Html.ValidationMessageFor(m=>m.UserReciverId)
+                            @(Html.Kendo().MultiSelect()
+                                  .Name("UserReciverId")
+                                  .DataTextField("Name")
+                                  .DataValueField("id")
+                                  .Placeholder("Seleccione los usuarios...")
+                                  .AutoBind(false)
+                                  .Events(x => x.Select(@<text>
+                                                            function(e) {
+
+                                                            }
+                                                         </text>))
+                                  .Events(x => x.Change(@<text>
+                                                            function (e) {
+
+
+                                                            }
+                                                         </text>))
+                                  //.Value(new[] { new { ProductName = "Chang", ProductID = 2 }, new { ProductName = "Uncle Bob's Organic Dried Pears", ProductID = 7 } })
+                                  .DataSource(source =>
+                                  {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("GetUsers", "Messaging");
+                                      })
+                                          .ServerFiltering(true);
+                                  })
+                                  )
+
+                            @Html.CheckBoxPersonal(mode => mode.IsUrgent)
+
+                        </div>  
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="subject" placeholder="Asunto">
+                        </div>
+                        <div>
+                            <textarea class="textarea" placeholder="Mensaje" id="Message" name="Message" style="width: 100%; height: 125px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                        </div>
+                        <div class="box-footer clearfix">
+                            <button class="pull-right btn btn-default" id="sendEmail">Send <i class="fa fa-arrow-circle-right"></i></button>
+                        </div>
+                    }
+
+                </div>
+              
+            </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+    </div>
+</div>

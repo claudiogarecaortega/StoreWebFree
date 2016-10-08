@@ -1,0 +1,28 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.AlmacenViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Delete, "Almacen"))
+}
+
+<fieldset>
+    @Html.HiddenFor(model => model.Id)
+    @Html.PersonalDisplayFor(model => model.Descripcion)
+    @Html.PersonalDisplayFor(model => model.Nombre)
+    @Html.PersonalDisplayFor(model => model.Calle)
+    @Html.PersonalDisplayFor(model => model.Numero)
+    @Html.PersonalDisplayFor(model => model.CodigoPostal)
+    @Html.PersonalDisplayFor(model => model.Ubicacion)
+				
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesBorrarCancelar()
+}

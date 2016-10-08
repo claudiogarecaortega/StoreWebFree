@@ -1,0 +1,62 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@model BassinoLibrary.ViewModels.InboundViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "InboundViewModel", Model.Id, "Restaurar Mercaderia")
+}
+
+
+<fieldset>
+    <div class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+        Al restaurar una carga afirma que no llego a destino, tome en cuenta que estara disponible en para ser enviada nuevamente, pero si la carga fue marcada como recibida no podra hacerlo
+    </div>
+	@Html.HiddenFor(model => model.Id)
+
+	@Html.PersonalDisplayFor(model => model.DateIn)
+	@Html.PersonalDisplayFor(model => model.DateTicket)
+	@Html.PersonalDisplayFor(model => model.ClientOrigen)
+	@Html.PersonalDisplayFor(model => model.BillType)
+	@Html.PersonalDisplayFor(model => model.Bill)
+	@Html.PersonalDisplayFor(model => model.BillNumber)
+    @Html.PersonalDisplayFor(model => model.PriceDecimal)
+    @Html.PersonalDisplayFor(model => model.Product)
+    @Html.PersonalDisplayFor(model => model.Description)
+    @Html.PersonalDisplayFor(model => model.PackageType)
+    @Html.PersonalDisplayFor(model => model.Quantity)
+    @Html.PersonalDisplayFor(model => model.Kilos)
+    @Html.PersonalDisplayFor(model => model.IsCold)
+    @Html.PersonalDisplayFor(model => model.UserControl)
+    @Html.PersonalDisplayFor(model => model.ClientFrom)
+    @Html.PersonalDisplayFor(model => model.ClientOrigen)
+    @Html.PersonalDisplayFor(model => model.ClientTo)
+    @Html.PersonalDisplayFor(model => model.UsoFisico)
+    
+    
+
+</fieldset>
+
+@section Footer
+{
+    @{
+        if (ViewBag.activa)
+        {
+            @Helpers.BotonesRestoreCancelarModal()
+        }
+        else
+        {
+            @Helpers.BotonClose()
+        }
+}
+  
+}
+
+

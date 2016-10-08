@@ -1,0 +1,40 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Domain.Contable
+@model BassinoLibrary.ViewModels.CuentasPagarViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, "CuentasPagar"))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+    @Html.PersonalTextAreaFor(model => model.Comentarios, "", 3, true)
+    @(Html.DateTimePicker(model => model.FechaVencimiento)
+          .Label()
+          .SetID("TicketDateTime")
+          .ChangeMonth()
+          .ChangeYear())
+
+    @Html.PersonalSEditorFor(model => model.Monto)
+    @(Html.ComboFor(model => model.CuentaExtractoId)
+              .TextField<Bancaria>(codigoAtc => codigoAtc.Alias)
+                      .ValueField<Bancaria>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                                      .Values(ViewBag.Cuentas)
+    )
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

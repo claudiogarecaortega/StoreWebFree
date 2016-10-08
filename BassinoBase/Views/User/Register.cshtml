@@ -1,0 +1,82 @@
+﻿@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Domain.Misc
+@using Domain.Security
+
+@model BassinoBase.Models.RegisterViewModel
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Register";
+    ViewBag.FormId = "CreateForm";
+}
+@section Header{
+    <div id="areaNotificacionLogin" class="notifiaction-container">
+        <div id="mensajeNotificacionLogin" class="notification">
+
+        </div>
+    </div>
+    @Helpers.ModalHeader(Resources.Register)
+}
+<fieldset>
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    @Html.PersonalSEditorForFull(model => model.Email, Resources.Email)
+    <label id="LabelMailReg" for="MailRegister" hidden>@string.Format(Resources.FieldRequiered, Resources.Email)</label>
+    <label id="LabelMailRegFormat" for="MailRegister" hidden>@Resources.EmailFormat</label>
+    @Html.PersonalSEditorForFullPassword(model => model.Password, Resources.Password)
+    @Html.PersonalSEditorForFullPassword(model => model.ConfirmPassword, Resources.Password)
+    @(Html.ComboFor(model => model.RolesId)
+                      .TextField<Domain.Security.Roles>(codigoAtc => codigoAtc.Description)
+                              .ValueField<Domain.Security.Roles>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                                      .Values(ViewBag.Roles)
+    )
+</fieldset>
+@section Footer{
+    @Helpers.BotonesGuardarCancelarModal()
+}
+
+
+<script>
+    $(document).ready(function() {
+
+        $("#Email").focusout(function() {
+            var mail = $(this).val();
+            if (mail.length > 2) {
+                if (IsEmail(mail)) {
+                    $("#LabelMailRegFormat").hide();
+                    //$.ajax({
+                    //    type: 'POST',
+                    //    data: { email: mail },
+                    //    url: '/PersonContacInfo/CheckUserName',
+                    //    success: function (responseText) {
+                    //        if (responseText == false) {
+                    //            $("#forgotSubmit").show();
+                    //            $("#forgot").hide();
+                    //        }
+                    //        else {
+                    //            mostrarErrorLogin("this email is al ready use");
+                    //            $("#forgotSubmit").hide();
+                    //            $("#forgot").show();
+                    //        }
+                    //    }
+                    //});
+                } else {
+                    $("#LabelMailRegFormat").show();
+                    $("#LabelMailRegFormat").css({
+                        "color": "red"
+                    });
+                }
+
+            } else {
+                mostrarErrorLogin("Enter atleast 3 characters");
+            }
+        });
+
+
+    });
+
+
+</script>

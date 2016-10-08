@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B8101279-5055-4B1D-A575-C736984D4368}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BassinoLibrary</RootNamespace>
+    <AssemblyName>BassinoLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Kendo.Mvc">
+      <HintPath>..\packages\Kendo.Mvc\Kendo.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\PlaceHolderAttribute.cs" />
+    <Compile Include="Helpers\AutocompleteBuilder.cs" />
+    <Compile Include="Helpers\ButtonAjaxBuilder.cs" />
+    <Compile Include="Helpers\ButtonBuilder.cs" />
+    <Compile Include="Helpers\CheckboxBuilder.cs" />
+    <Compile Include="Helpers\CheckboxListBuilder.cs" />
+    <Compile Include="Helpers\ColorPickerBuilder.cs" />
+    <Compile Include="Helpers\ComboBuilder.cs" />
+    <Compile Include="Helpers\DateTimePickerBuilder.cs" />
+    <Compile Include="Helpers\GridBuilder.cs" />
+    <Compile Include="Helpers\GridDedailsMode.cs" />
+    <Compile Include="Helpers\KendoWidgetFactory.cs" />
+    <Compile Include="Helpers\MultiSelectBuilder.cs" />
+    <Compile Include="Helpers\RadioButtonBuilder.cs" />
+    <Compile Include="Helpers\RazorHelpers.cs" />
+    <Compile Include="Helpers\UIBuilder.cs" />
+    <Compile Include="Helpers\UIExtension.cs" />
+    <Compile Include="Helpers\UriHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resource\Resources.es-ES.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.es-ES.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\EnumExtensions.cs" />
+    <Compile Include="Utils\ReflectionUtils.cs" />
+    <Compile Include="ViewModels\ActionsViewModel.cs" />
+    <Compile Include="ViewModels\AlertViewModel.cs" />
+    <Compile Include="ViewModels\AlmacenViewModel.cs" />
+    <Compile Include="ViewModels\BancariaViewModel.cs" />
+    <Compile Include="ViewModels\BillTypeViewModel.cs" />
+    <Compile Include="ViewModels\BillViewModel.cs" />
+    <Compile Include="ViewModels\CarViewModel.cs" />
+    <Compile Include="ViewModels\CategoriaViewModel.cs" />
+    <Compile Include="ViewModels\ClientViewModel.cs" />
+    <Compile Include="ViewModels\ComentariosViewModel.cs" />
+    <Compile Include="ViewModels\ContractTemplateViewModel.cs" />
+    <Compile Include="ViewModels\ContractViewModel.cs" />
+    <Compile Include="ViewModels\CreditoViewModel.cs" />
+    <Compile Include="ViewModels\CuentasCobrarViewModel.cs" />
+    <Compile Include="ViewModels\CuentasPagarViewModel.cs" />
+    <Compile Include="ViewModels\CuotasViewModel.cs" />
+    <Compile Include="ViewModels\EmpresaViewModel.cs" />
+    <Compile Include="ViewModels\EtiquetasViewModel.cs" />
+    <Compile Include="ViewModels\ImagenesViewModel.cs" />
+    <Compile Include="ViewModels\InboundtrackingViewModel.cs" />
+    <Compile Include="ViewModels\InboundViewModel.cs" />
+    <Compile Include="ViewModels\MeasureUnitViewModel.cs" />
+    <Compile Include="ViewModels\MessagingViewModel.cs" />
+    <Compile Include="ViewModels\ModuleViewModel.cs" />
+    <Compile Include="ViewModels\MovimientosStockViewModel.cs" />
+    <Compile Include="ViewModels\NotificationViewModel.cs" />
+    <Compile Include="ViewModels\PackageTypeViewModel.cs" />
+    <Compile Include="ViewModels\PedidosProductoViewModel.cs" />
+    <Compile Include="ViewModels\PedidosViewModel.cs" />
+    <Compile Include="ViewModels\PreguntasViewModel.cs" />
+    <Compile Include="ViewModels\ProductViewModel.cs" />
+    <Compile Include="ViewModels\PromocionesViewModel.cs" />
+    <Compile Include="ViewModels\ProviderViewModel.cs" />
+    <Compile Include="ViewModels\RolesViewModel.cs" />
+    <Compile Include="ViewModels\ServicesViewModel.cs" />
+    <Compile Include="ViewModels\ShipmentTrackViewModel.cs" />
+    <Compile Include="ViewModels\ShipmentViewModel.cs" />
+    <Compile Include="ViewModels\StockViewModel.cs" />
+    <Compile Include="ViewModels\TaxConditionViewModel.cs" />
+    <Compile Include="ViewModels\UbicationViewModel.cs" />
+    <Compile Include="ViewModels\UserViewModels.cs" />
+    <Compile Include="ViewModels\VentaViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource\Resources.es-ES.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.es-ES.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{B015DEF4-3B7C-45DF-891B-97EB6D6AE26E}</Project>
+      <Name>Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

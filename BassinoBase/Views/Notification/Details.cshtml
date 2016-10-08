@@ -1,0 +1,21 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.NotificationViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "Notification", Model.Id, string.Format("{0} {1}", Resources.Details, Resources.Notification))
+}
+
+
+<fieldset>
+
+	@Html.PersonalDisplayFor(model => model.Description)
+
+</fieldset>
+
+

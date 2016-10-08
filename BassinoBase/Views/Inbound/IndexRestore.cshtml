@@ -1,0 +1,244 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Interfaz.Controllers
+@using BassinoLibrary.ViewModels
+
+
+@*Helpers.BotonCreateUrl("Inbound/Create", "Crear Nueva Recepcion de Mercaderia", )*@
+
+<script>
+
+    $(document).ready(function() {
+        //  $("input[type=\"checkbox\"]").bootstrapSwitch();
+        $('#init').attr('checked', true);
+        sumarKilos();
+       
+        updateTitle("Recepcion de Mercaderia", "Rescate de Mercaderia");
+    });
+    function buscar() {
+        RefrescarGrilla();
+    }
+    function limpiar() {
+        $('#init').attr('checked', false);
+        $('#viaje').attr('checked', false);
+        $('#end').attr('checked', false);
+        $("#filterText").val("");
+        RefrescarGrilla();
+    }
+    function RefrescarGrilla() {
+        $(".k-grid").each(function () {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+    function cargasViaje() {
+        return {
+            idViaje: $("#idViaje").val(),
+            filtro: $("#filterText").val(),
+            viaje: $("#viaje").prop('checked'),
+        end: $("#end").prop('checked'),
+        init: $("#init").prop('checked')
+            // EmpresaID: $("#EmpresaID").val()
+        };
+    }
+    function cargarViaje() {
+        var va = $("#idViaje").val();
+        if (va != "0") {
+            var url = 'Inbound/Restore?data=' + va;
+            $.get(url, function (data) {
+                $('#modal').html(data);
+                $('#modal').modal({ backdrop: 'static', keyboard: false });
+              });
+
+        } else {
+            alertWarnig("No puede Crear un viaje sin haber selecionado las Cargas");
+        }
+
+
+    }
+    function createViaje() {
+        var va = $("#idViaje").val();
+        var valor = "";
+        if (va != "0") {
+            valor = va;
+        }
+
+        $('#GridInbound .k-selectable tr').each(function (i, row) {
+
+            // reference all the stuff you need first
+            var $row = $(row),
+                $family = $row.find('input[name*="viaje"]');
+
+            var id = $family[0].id;
+
+            if ($family[0].checked) {
+                valor = valor + "-" + $("#" + id).val();
+
+            }
+
+
+        });
+        if (valor == "") {
+            alertWarnig("Debe selecionar al menos una carga para proceder con la carga del viaje");
+        } else {
+            $("#idViaje").val(valor);
+            RefrescarGrilla();
+        }
+
+    }
+    function activateButtons() {
+        $("#divBotones").hide();
+
+    }
+    function sumarKilos() {
+        var valor = 0;
+        var usoFisicoValor = 0;
+        //bultosLabel
+        var contador = 0;
+        $('#GridInbound .k-selectable tr').each(function (i, row) {
+
+            // reference all the stuff you need first
+            var $row = $(row),
+                $family = $row.find('td[name*="kilositem"]');
+            $usoFisic = $row.find('td[name*="usoFisicoItem"]');
+            $chec = $row.find('input[name*="viaje"]');
+            var idviaje = $chec[0].id;
+            var id = $family[0].id;
+            var idUsoFisico = $usoFisic[0].id;
+            if (!$("#" + idviaje).is(':disabled'))
+                valor = valor + parseFloat($("#" + id).text().replace(',','.'));
+
+            usoFisicoValor=usoFisicoValor+parseFloat($("#" + idUsoFisico).text().replace(',','.'));
+            contador = contador + 1;
+
+        });
+        $("#kilosLabel").text("Kilos Totales: " + valor);
+        $("#usoFisicoLabel").text("Total Uso Fisico: " + usoFisicoValor);
+        $("#bultosLabel").text("Bultos Totales: " + contador);
+
+    }
+    function sumarKilosGrid2() {
+        var valor = 0;
+        var usoFisicoValor = 0;
+        //bultosLabel
+        var contador = 0;
+        var rowCount = $('#GridInbound2 .k-selectable tr').length;
+        if (rowCount > 0) {
+            $('#GridInbound2 .k-selectable tr').each(function (i, row) {
+
+                // reference all the stuff you need first
+                var $row = $(row),
+                    $family = $row.find('td[name*="kilositem"]');
+                $usoFisic = $row.find('td[name*="usoFisicoItem"]');
+                $chec = $row.find('input[name*="viaje"]');
+                var idviaje = $chec[0].id;
+                var idUsoFisico = $usoFisic[0].id;
+                var id = $family[0].id;
+                if (!$("#" + idviaje).is(':disabled'))
+                    valor = valor + parseFloat($("#" + id).text().replace(',','.'));
+
+                usoFisicoValor=usoFisicoValor+parseFloat($("#" + idUsoFisico).text().replace(',','.'));
+                contador = contador + 1;
+
+            });
+        }
+        $("#kilosLabel2").text("Kilos Totales: " + valor);
+        $("#bultosLabel2").text("Bultos Totales: " + contador);
+        $("#usoFisicoLabel2").text("Total Uso Fisico: " + usoFisicoValor);
+        $("#kilosCreate").val(valor);
+        $("#itemsCreate").val(contador);
+
+    }
+    function descreateViaje() {
+        var va = $("#idViaje").val();
+        var valor = "";
+        if (va != "0") {
+
+            var bandera = false;
+            valor = "";
+            $('#GridInbound2 .k-selectable tr').each(function (i, row) {
+
+                // reference all the stuff you need first
+                var $row = $(row),
+                    $family = $row.find('input[name*="viaje"]');
+
+                var id = $family[0].id;
+                if (!$family[0].checked) {
+                    valor = valor + "-" + $("#" + id).val();
+
+                }
+                else { bandera = true; }
+
+
+            });
+            if (!bandera) {
+                alertWarnig("No puede descargar mercaderia si no ha selecionado ninguna");
+            } else {
+                $("#idViaje").val(valor);
+                RefrescarGrilla();
+            }
+        }
+        else { alertWarnig("No puede Descargar Mercaderia que si no se agrego las mismas"); }
+    }
+    function onDataBound(arg) {
+      //  sumarKilos();
+
+    }
+    //function onDataBoundGrid2(arg) {
+    //    sumarKilosGrid2();
+
+    //}
+
+</script>
+<input type="hidden" name="idViaje" id="idViaje" value="0">
+@Helpers.BuscadorNoFilter()
+<div class="list-group">
+  <a class="list-group-item" style="display: inline;" onclick=" readActions('Inbound', 'Restore') " href="#"><i class="fa fa-automobile"></i>  Restaurar</a>
+</div>
+
+@(Html.KendoGrid().Grid<InboundViewModel, InboundController>(GridDetailsMode.None)
+    .Name("GridInbound")
+     .Scrollable(scr => scr.Height("auto"))
+
+    .Columns(columns =>
+    {
+        columns.Template(@<text></text>).Width(50).ClientTemplate("").Title("Viaje");
+        columns.Template(@<text></text>).Width(70).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>").Title("Acciones");
+        columns.Bound(p => p.Secuencia).Template(@<text></text>).Title("N° de Ingreso");
+        columns.Bound(p => p.DateIn).Template(@<text></text>).Title("Fecha de Ingreso");
+        columns.Bound(p => p.ClientOrigen).Template(@<text></text>).Title(" Origen");
+
+        columns.Bound(p => p.ClientTo).Template(@<text></text>).Title(" Destino");
+        columns.Bound(p => p.Kilos).Template(@<text></text>).Title(" Kilos");
+        columns.Bound(p => p.UsoFisico).Template(@<text></text>).Title(" Uso Fisico");
+        columns.Bound(p => p.Description).Template(@<text></text>).Title(" Comentarios").HtmlAttributes(new { @style = "overflow: visible;" });
+        // columns.Template(@<text></text>).HtmlAttributes(new { @class = "acciones" }).Width(150).ClientTemplate(@Html.Partial("_GridAcctions").ToString())
+        //      .HtmlAttributes(new { @style = "overflow: visible;" });
+
+    }).ClientRowTemplate("<tr style='#= Status =='green' ? \"background-color: green ;\" : Status =='yellow' ? \"background-color: yellow ;\":\"\" #' data-uid='#= uid #'>" +
+                                                        "<td data-uid='#= uid #'><input type='checkbox' '#= Status =='green' ? \" disabled \" : Status =='yellow' ? \" disabled \":\"\" #'  name='viaje' class='chkbx' value='#= id #' id='_#= id #'/></td>" +
+                             "<td><input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/></td>" +
+                    "<td>#: Secuencia #</td>" +
+                                            "<td >#: DateIn #</td>" +
+                                            "<td >#: ClientOrigen #</td>" +
+                                            "<td >#: ClientTo #</td>" +
+                                                    "<td name='kilositem' id='kilosItem_#= id #'>#: Kilos #</td>" +
+                                                            "<td name='usoFisicoItem' id='usoFisicoItem_#= id #'>#: UsoFisico #</td>" +
+                                                    "<td >#: Description #</td>" +
+        //"<td  class='acciones' style='overflow: visible;'>" + @Html.Partial("_GridAcctions").ToString() + "</td>" +
+                                      "</tr>")
+        // .EditarBorrar((bool)ViewBag.editar, (bool)ViewBag.borrar) style='#= IsUsed == true ? \"background-color: green;\" : \"\" #'
+            .DataSource(dataSource => dataSource
+                .Ajax()
+
+                .Model(conf => conf.Id(model => model.Id))
+                .PageSize(10)
+                            .Read(read => read.Action("GridInfoCargasRestore", "Inbound").Data("cargasViaje"))
+                    ).Events(events => events.DataBound("onDataBound"))
+)
+<div class="color-palette-set" style="width: 100%;padding-bottom: 15px;display: inline-flex;">
+    <div style="margin-right: 10px; background-color: green; font-weight: bold;"><span>Viaje Finalizado. </span></div>
+</div>
+

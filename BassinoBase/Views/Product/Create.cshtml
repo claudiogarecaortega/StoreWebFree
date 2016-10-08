@@ -1,0 +1,100 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Domain.Misc
+@using Domain.Providers
+@using Kendo.Mvc.UI
+@model BassinoLibrary.ViewModels.ProductViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, Resources.Product))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.PersonalSEditorFor(model => model.Nombre)
+	@Html.PersonalTextAreaFor(model => model.Description, "Description", 3, true)
+	@Html.PersonalSEditorFor(model => model.Precio)
+	@Html.CheckBoxPersonal(model => model.IsPrincipal)
+    @Html.Label("Categorias")
+    @(Html.Kendo().MultiSelect()
+                                                  .Name("CategoriasId")
+                                  .DataTextField("Name")
+                                  .DataValueField("id")
+                                 .Placeholder("Seleccione las Categorias...")
+                                  .AutoBind(false)
+                                  .Events(x => x.Select(@<text>
+                                    function(e) {
+
+                                    }
+                                </text>))
+                                  .Events(x => x.Change(@<text>
+        function (e) {
+ 
+
+        }
+                                </text>)) .Events(x => x.Select(@<text>
+        function (e) {
+ 
+
+        }
+                                </text>))
+                                     .DataSource(source =>
+                                                                    {
+                                                                        source.Read(read =>
+                                                                        {
+                                                                            read.Action("GetCategorias", "Categoria");
+                                                                        })
+                                                                            .ServerFiltering(true);
+                                                                    })
+)
+    @Html.Label("Etiquetas")
+    @(Html.Kendo().MultiSelect()
+                                                  .Name("EtiquetasId")
+                                  .DataTextField("Name")
+                                  .DataValueField("id")
+                                 .Placeholder("Seleccione las Etiquetas...")
+                                  .AutoBind(false)
+                                  .Events(x => x.Select(@<text>
+                                    function(e) {
+
+                                    }
+                                </text>))
+                                  .Events(x => x.Change(@<text>
+        function (e) {
+
+
+        }
+                                </text>))
+                                         .DataSource(source =>
+                                                                        {
+                                                                            source.Read(read =>
+                                                                            {
+                                                                                read.Action("GetEtiquetas", "Etiquetas");
+                                                                            })
+                                                                                .ServerFiltering(true);
+                                                                        })
+    )
+
+
+
+
+
+
+
+
+   
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

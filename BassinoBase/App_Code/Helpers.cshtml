@@ -1,0 +1,866 @@
+﻿@using System.Web.Mvc
+@using System.Web.Mvc.Ajax
+@using System.Web.Mvc
+@using System.Web.Mvc.Html
+
+@using BassinoLibrary.Resource
+
+@helper Checkbox(WebViewPage page, string label, string inputName)
+{
+    <div class="form-group">
+        @page.Html.Label(label, new { @class = "input-group-addon", @style = "min-width:100px;" })
+        <span class="input-group-addon">
+            @page.Html.CheckBox(inputName)
+        </span>
+        @page.Html.ValidationMessage(inputName, new { @class = "help-block" })
+    </div>
+}
+
+
+@helper Combo(WebViewPage page, string label, string inputName, IEnumerable<System.Web.Mvc.SelectListItem> values)
+{
+    <div class="form-group">
+        @page.Html.Label(label, new { @class = "input-group-addon", @style = "min-width:100px;" })
+        @page.Html.DropDownList(inputName, values, new { @class = "form-control" })
+        @page.Html.ValidationMessage(inputName, new { @class = "help-block" })
+    </div>
+}
+
+@helper ModalHeader(string headerText)
+{
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">@headerText</h4>
+}
+@helper ModalFooter()
+{
+    <div class="col-md-12">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">@Resources.Cancel</button>
+    </div>
+}
+@helper ModalFooterSaveCancel()
+{
+    <button onclick=" CargarModalsReusables(); " id="btnSubmit" class="btn btn-primary btn-lg ">@Resources.Create </button>
+    <button onclick=" CargarModalsReusables(); " type="button" class="btn btn-info btn-lg " data-dismiss="modal" aria-hidden="true">@Resources.Cancel</button>
+}
+@helper ModalFooterDeleteCancel()
+{
+    <button onclick=" CargarModalsReusables(); " id="btnSubmit" class="btn btn-danger btn-lg ">@Resources.Delete </button>
+    <button onclick=" CargarModalsReusables(); " type="button" class="btn btn-success btn-lg " data-dismiss="modal" aria-hidden="true">@Resources.Cancel</button>
+}
+@helper ModalHeaderLogin()
+{
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h1 class="text-center">@Resources.Login</h1>
+}
+@helper ModalHeaderDetails(WebViewPage page, string controller, object id, string headerText, bool? linkAEditar = null)
+{
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    if ((linkAEditar == null || linkAEditar.GetValueOrDefault()))
+    {
+        <a data-ajax="true" data-ajax-mode="replace" data-ajax-update="#modal-dialog" href="~/@controller/Edit/@id" style="float: right; margin-right: 5px;">
+            <i class="glyphicon glyphicon-pencil"></i>
+        </a>
+    }
+    <h4 class="modal-title">@headerText</h4>
+}
+
+@helper Modal(string id)
+{
+    <div id="@id" class="modal fade modalReusable">
+    </div>
+}
+@helper ModalLogin(string id)
+{
+    <div id="@id" class="modal fade modalReusable">
+
+    </div>
+}
+@helper LinkAperturaModal(WebViewPage page, string text, string actionName, string modalId, object routeValues)
+{ @page.Html.ActionLink(text, actionName, routeValues, new { @data_target = modalId, @data_toggle = "modal" })}
+
+@helper LinkEditarGridModal(WebViewPage page, string action, string controller)
+{
+    <a href="~/@controller/@action/#= Id #" data-target="\\#modal" data-toggle="modal">
+        <i class="glyphicon glyphicon-pencil"></i>
+    </a>
+}
+
+@helper LinkDetallesGridModal(string action, string controller)
+{
+    <a href="~/@controller/@action/#= Id #" data-target="\\#modal" data-toggle="modal">
+        <i class="glyphicon glyphicon-eye-open"></i>
+    </a>
+}
+
+@helper LinkBorrarGridModal(WebViewPage page, string action, string controller)
+{
+    <a href="~/@controller/@action/#= Id #" data-target="\\#modal" data-toggle="modal">
+        <i class="glyphicon glyphicon-trash"></i>
+    </a>
+}
+
+@helper LinkBorrarGridModalDesdeUnPopup(WebViewPage page, string action, string controller)
+{
+    <a href="~/@controller/@action/#= Id #" data-ajax="true" data-ajax-mode="replace" data-ajax-update="\\#modal-dialog">
+        <i class="glyphicon glyphicon-trash"></i>
+    </a>
+}
+
+@helper LinkEditarGridModalDesdeUnPopup(WebViewPage page, string action, string controller)
+{
+    <a href="~/@controller/@action/#= Id #" data-ajax="true" data-ajax-mode="replace" data-ajax-update="\\#modal-dialog">
+        <i class="glyphicon glyphicon-pencil"></i>
+    </a>
+}
+
+@helper LinkEditarGrid(WebViewPage page, string action, string controller, bool? showLabel = null)
+{
+    <a href="~/@controller/@action/#= Id #">
+        <i class="glyphicon glyphicon-pencil"></i>
+        @if (showLabel != null && showLabel.GetValueOrDefault())
+        {
+            @Resources.Edit
+        }
+    </a>
+}
+
+@helper LinkEditar(WebViewPage page, string action, string controller, object id, bool? showLabel = null)
+{
+    <a href="~/@controller/@action/@id">
+        <i class="glyphicon glyphicon-pencil"></i>
+        @if (showLabel != null && showLabel.GetValueOrDefault())
+        {
+            @Resources.Edit
+        }
+    </a>
+}
+
+@helper LinkDetallesGrid(string action, string controller, bool? showLabel = null)
+{
+    <a href="~/@controller/@action/#= Id #">
+        <i class="glyphicon glyphicon-eye-open"></i>
+        @if (showLabel != null && showLabel.GetValueOrDefault())
+        {
+            @Resources.Details
+        }
+    </a>
+}
+
+@helper LinkBorrarGrid(WebViewPage page, string action, string controller, bool? showLabel = null)
+{
+    <a href="~/@controller/@action/#= Id #">
+        <i class="glyphicon glyphicon-trash"></i>
+        @if (showLabel != null && showLabel.GetValueOrDefault())
+        {
+            @Resources.Delete
+        }
+    </a>
+}
+
+@helper LinkBorrar(WebViewPage page, string action, string controller, object id, bool? showLabel = null)
+{
+    <a href="~/@controller/@action/@id">
+        <i class="glyphicon glyphicon-trash"></i>
+        @if (showLabel != null && showLabel.GetValueOrDefault())
+        {
+            @Resources.Delete
+        }
+    </a>
+}
+
+
+@helper BotonAperturaModalGrid(string text, string action, string controller)
+{
+    <a href="~/@controller/@action" data-target="#modal" data-toggle="modal" class="btn btn-default">@text</a>
+}
+
+@helper BotonAperturaModalCreateDesdeUnPopup(WebViewPage page, string actionName, string modalId, object routeValues)
+{ @page.Ajax.ActionLink(Resources.New, actionName, routeValues, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = modalId }, new { @class = "btn btn-primary btn-sm" })}
+
+@helper BotonAperturaModalCreateDesdeUnPopupImagen(WebViewPage page, string actionName, string modalId, object routeValues)
+{ @page.Ajax.ActionLink(Resources.New, actionName, routeValues, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = modalId }, new { @class = "btn btn-primary btn-sm" })}
+@helper BotonAperturaModalCreateDesdeUnPopupPaciente(WebViewPage page, string actionName, string modalId, object routeValues, string idetiqueta, string nombre)
+{ @page.Ajax.ActionLink(nombre, actionName, routeValues, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = modalId }, new { @class = "btn btn-primary", id = idetiqueta })}
+@helper BotonesRestoreCancelarModal()
+{
+    <input class="btn btn-primary" data-switch-create-destroy id="botonGuardarId" type="submit" value="Restaurar" />
+    <input class="btn btn-default" data-switch-create-destroy type="button" value="@Resources.Cancel" data-dismiss="modal" />
+}
+@helper BotonesGuardarCancelarModal()
+{
+    <input class="btn btn-primary" data-switch-create-destroy id="botonGuardarId" type="submit" value="@Resources.Save" />
+    <input class="btn btn-default" data-switch-create-destroy type="button" value="@Resources.Cancel" data-dismiss="modal" />
+}
+
+@helper BotonesAcction(bool edit,bool delete,bool view,string controller)
+{
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Acctiones
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @if (edit)
+            {
+                <li><a onclick="readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil fa-2x"></i>Editar</a></li>
+            }
+            @if (view)
+            {
+                <li><a onclick="readActions('@controller', 'Details' ) " href=" #"><i class="fa fa-eye fa-2x"></i>Detalles</a></li>
+            }
+            @if (delete)
+            {
+                <li><a onclick="readActions('@controller', 'Delete' ) " href=" #"><i class="fa fa-trash fa-2x"></i>Eliminar</a></li>
+            }  
+           
+            
+        </ul>
+    </div>
+}
+@helper BotonesAcctionClient(bool crear,string crearAction,bool edit, bool delete, bool view, string controller,string editAction,bool contratos=false)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@controller/@crearAction"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nuevo</a>
+        }
+       @if (edit)
+            {
+                <a class="list-group-item" style="display: inline;" onclick="readActions('@controller', '@editAction' )" href="#">
+                    <i class="fa fa-pencil fa-fw"></i>&nbsp; Editar
+                </a>
+            }
+            @if (view)
+            {
+                <a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Details' )" href="#">
+                    <i class="fa fa-eye fa-fw"></i>&nbsp; Detalles
+                </a>
+                
+            }
+            @if (delete)
+            {
+                <a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Delete' )" href="#">
+                    <i class="fa fa-trash fa-fw"></i>&nbsp; Eliminar
+                </a>
+               
+            }
+            @if (contratos)
+            {
+                <a id="syncContract" class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'SyncContract') " href="#">
+                    <i class="fa fa-clipboard fa-fw"></i>&nbsp; Asignar Contratos
+                </a>
+    <a id="editContract" class="list-group-item" style="display: none;" onclick="readActions('@controller', 'EditContract' )" href="#">
+        <i class="fa fa-file-word-o fa-fw"></i>&nbsp; Editar Contrato
+    </a>
+
+
+
+            }
+
+        
+    </div>
+}
+@helper BotonesActiones(bool crear, bool editar, bool eliminar, bool detalles, string controller)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@controller/Create"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nuevo</a>
+        }
+        @if (editar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil "></i>Editar</a>
+        }
+        @if (eliminar)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Delete') " href="#"><i class="fa fa-trash "></i>Eliminar</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Details') " href="#"><i class="fa fa-eye "></i>Detalles</a>
+        }
+    </div>
+}
+@helper BotoneGeneric(string controller, string action,string icon,string name)
+{
+
+    <a class="list-group-item " style="display: inline;" onclick=" readActions('@controller', '@action' ) " href=" #"><i class="@icon"></i>&nbsp; @name</a>
+
+}
+@helper BotonesActionesCuotas(bool crear ,string controller)
+{
+    <div class="list-group">
+       
+        @if (crear)
+        {
+            @BotoneGeneric(controller,"Edit","fa fa-money ","PAgar Cuota")
+        }
+       
+    </div>
+}
+@helper BotonesActionesCredito(bool crear, bool editar, bool eliminar, bool detalles, string controller)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@controller/Create"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nuevo</a>
+        }
+        @if (editar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil "></i>&nbsp; Editar</a>
+        }
+        @if (eliminar)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Delete') " href="#"><i class="fa fa-trash "></i>&nbsp; Eliminar</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Details') " href="#"><i class="fa fa-eye "></i>&nbsp; Detalles</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'CloseCredit' ) " href=" #"><i class="fa fa-money "></i>&nbsp; Cerrar Credito</a>
+        }
+        @if (detalles)
+        {
+            <a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Amortizar' ) " href=" #"><i class="fa fa-random "></i>&nbsp; Adelantar</a>
+        }
+        @if (detalles)
+        {
+            <a class="list-group-item" style="display: inline;" onclick=" readactions('@controller', 'Amortizar' ) " href=" #"><i class="fa fa-print "></i>&nbsp; <i class="fa  fa-bars "></i>&nbsp; Imprimir Detalles</a>
+        }
+        @if (detalles)
+        {
+            <a class="list-group-item" style="display: inline;" onclick=" readactions('@controller', 'Amortizar' ) " href=" #"><i class="fa fa-print "></i>&nbsp; <i class="fa  fa-bars "></i>&nbsp; Imprimir Detalles</a>
+        }
+    </div>
+}
+@helper BotonesActionesMovimientosStock(bool crear, bool editar, bool eliminar, bool detalles, string controller)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@controller/Create"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nuevo</a>
+        }
+        @if (editar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil "></i>&nbsp; Editar</a>
+        }
+        @if (eliminar)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Delete') " href="#"><i class="fa fa-trash "></i>&nbsp; Eliminar</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Details') " href="#"><i class="fa fa-eye "></i>&nbsp; Detalles</a>
+        }
+       
+    </div>
+}
+@helper BotonesActionesStock(bool crear, bool editar, bool eliminar, bool detalles, string controller)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@controller/Create"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nuevo</a>
+        }
+        @if (editar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil "></i>&nbsp; Editar</a>
+        }
+        @if (eliminar)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Delete') " href="#"><i class="fa fa-trash "></i>&nbsp; Eliminar</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Details') " href="#"><i class="fa fa-eye "></i>&nbsp; Detalles</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('MovimientosStock', 'AddStock' ) " href=" #"><i class="fa fa-plus-circle "></i>&nbsp; Agregar de Stock</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('MovimientosStock', 'RemoveStock') " href="#"><i class="fa fa-minus-circle "></i>&nbsp; Baja Stock</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('MovimientosStock', 'MovimientoStock') " href="#"><i class="fa fa-refresh"></i>&nbsp; Ver Movimientos Stock</a>
+        }
+    </div>
+}
+
+
+@helper BotonesActionesAlmacen(bool crear, bool editar, bool eliminar, bool detalles,bool stock, string controller)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@controller/Create"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nuevo</a>
+        }
+        @if (editar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil "></i>Editar</a>
+        }
+        @if (eliminar)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Delete') " href="#"><i class="fa fa-trash "></i>Eliminar</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Details') " href="#"><i class="fa fa-eye "></i>Detalles</a>
+        }
+        @if (stock)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'AddStock' ) " href=" #"><i class="fa fa-cubes "></i>Agregar Stock</a>
+        }
+    </div>
+}
+@helper BotonesActionesProducto(bool crear,bool editar,bool eliminar,bool detalles,bool imagenes,string controller)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@controller/Create"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nuevo</a>
+        }
+        @if (editar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil "></i>&nbsp; Editar</a>
+        }
+        @if (eliminar)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Delete') " href="#"><i class="fa fa-trash "></i>&nbsp; Eliminar</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Details') " href="#"><i class="fa fa-eye "></i>&nbsp; Detalles</a>
+        }
+        @if (imagenes)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'AddImages') " href="#"><i class="fa fa-picture-o "></i>&nbsp; Agregar Imagenes</a>
+        }
+        @if (imagenes)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'DeleteImages' ) " href=" #"><i class="fa fa-picture-o "></i>&nbsp; Eliminar Imagenes</a>
+        }
+    </div>
+}
+@helper BotonesActionesNotification()
+{
+    <div class="list-group">
+    
+        <a class="list-group-item" style="display: inline;" onclick=" readActionsNotifications() " href="#"><i class="fa fa-eye "></i>Detalles</a>
+        
+    </div>
+}
+@helper BotonesActionesShipment(bool crear, bool editar, bool eliminar, bool detalles, bool enviar, bool finalizar, string controller, bool track, bool recibir, bool enviarShip, bool iniciar)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@controller/Create"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nuevo Viaje</a>
+        }
+        @if (editar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil "></i>&nbsp; Editar</a>
+        }
+        @if (eliminar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Delete') " href="#"><i class="fa fa-trash "></i>&nbsp; Eliminar</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Details') " href="#"><i class="fa fa-eye "></i>&nbsp; Detalles</a>
+        }
+        @if (iniciar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'SendShip' ) " href=" #"><i class="fa fa-plane "></i>&nbsp; Inciar</a>
+        }
+        @if (finalizar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'FinishShip' ) " href=" #"><i class="fa fa-lock "></i>&nbsp; Finalizar</a>
+        }
+        @if (track)
+        { <a class="list-group-item" style="display: inline;" onclick="readActions('ShipmentTrack', 'ShipTrackView')" href="#"><i class="fa fa-eye fa-fw"></i>&nbsp; Ver Movimientos</a>
+        }
+        @if (recibir)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('ShipmentTrack', 'Receive')" href="#"><i class="fa fa-truck "></i>&nbsp; Recibir</a>
+        }
+        @if (enviar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('ShipmentTrack', 'Send') " href="#"><i class="fa fa-plane "></i>&nbsp; Enviar</a>
+        }
+        @if (enviarShip)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('Shipment', 'Anular') " href="#"><i class="fa fa-close "></i>&nbsp; Anular Viaje</a>
+        }
+        
+    </div>
+}
+@helper BotonesActionesInbound(bool crear, bool editar, bool eliminar, bool detalles, bool ver, string controller, IList<System.Web.Mvc.SelectListItem> lista)
+{
+    <div class="list-group">
+        @if (crear)
+        {
+            <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="Inbound/Create"><i class="fa fa-plus fa-fw"></i>&nbsp; Crear Nueva Recepcion de Mercaderia</a>
+        }
+        @if (editar)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Edit') " href="#"><i class="fa fa-pencil "></i>&nbsp; Editar</a>
+        }
+        @if (eliminar)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Delete') " href="#"><i class="fa fa-trash "></i>&nbsp; Eliminar</a>
+        }
+        @if (detalles)
+        {<a class="list-group-item" style="display: inline;" onclick=" readActions('@controller', 'Details') " href="#"><i class="fa fa-eye "></i>&nbsp; Detalles</a>
+        }
+        @if (ver)
+        {
+            <a class="list-group-item" style="display: inline;" onclick=" createViaje() " href="#"><i class="fa fa-automobile"></i>Cargar</a>
+        }
+
+    </div>
+    <div class="form-group">
+        <label>Camiones</label>
+        <select class="form-control select2" style="width: 50%;" id="cuentaBox" onchange="getval(this);">
+            @{
+                foreach (var item in lista)
+                {
+                    if (item.Selected)
+                    {
+                        <option value="@item.Value" selected="selected">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+
+
+
+                }
+            }
+        </select>
+
+
+
+    </div><!-- /.form-group -->
+}
+@helper BotonesActionesInboundViaje(bool crear, bool editar,string controller)
+{
+    <div class="list-group">
+        @if (crear)
+        { <a id="crearViajeBoton" class="list-group-item" style="display: inline;" onclick=" cargarViaje() " href="#"><i class="fa fa-automobile"></i> Crear Viaje</a>
+        }
+        @if (editar)
+        {<a id="descargarViajeBoton" class="list-group-item" style="display: inline;" onclick="descreateViaje() " href="#"><i class="fa fa-cloud-download"></i> Descargar</a>
+        }
+       
+
+    </div>
+}
+@helper BotonesActionesTrack(bool track, bool recibir, bool enviar, string controller)
+{
+    <div class="list-group">
+        @if (track)
+        { <a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'ShipTrackView')" href="#"><i class="fa fa-eye fa-fw"></i>&nbsp; Ver Movimientos</a>
+        }
+        @if (recibir)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Receive')" href="#"><i class="fa fa-truck "></i>&nbsp; Recibir</a>
+        }
+        @if (enviar)
+        {<a class="list-group-item" style="display: inline;" onclick="readActions('@controller', 'Send') " href="#"><i class="fa fa-plane "></i>&nbsp; Enviar</a>
+        }
+      
+    </div>
+}
+@helper BotonCreateUrl(string url, string text, bool permiso = false, bool print = false, string textPrint = "",string urlPrint="")
+{
+    <div class="list-group">
+        @if(permiso){
+
+        <a class="list-group-item" style="display: inline;" data-target="#modal" data-backdrop="static" data-keyboard="false" data-toggle="modal" href="@url"><i class="fa fa-plus fa-fw"></i>&nbsp; @text</a>
+    
+        }
+ @if (print)
+ {
+  <a class="list-group-item" style="display: inline;" target="_blank" href="@urlPrint"><i class="fa fa-file-pdf-o fa-fw"></i>&nbsp; Exportar PDF</a>
+
+    <a class="list-group-item" style="display: inline;" target="_blank" href="/Report/PrintAllProductsExcel"><i class="fa fa-file-excel-o fa-fw"></i>&nbsp; Exportar Excel</a>
+ }
+       
+       
+</div>
+}
+@helper BotonReporte(string url, string text, bool permiso = false)
+{
+
+    if (permiso)
+    {
+        <div class="list-group">
+            <a class="list-group-item" style="display: inline;" target="_blank" href="@url"><i class="fa fa-print fa-fw"></i>&nbsp; @text</a>
+        </div>
+    }
+
+}
+@helper BotonCreate(string controller,string action,string text)
+{
+    <input class="btn btn-primary" id="botonGuardarId" type="submit" value="@Resources.Save" />
+    <input class="btn btn-default" type="button" value="@Resources.Cancel" data-dismiss="modal" />
+}
+@helper BotonesGuardarCancelarModalSend()
+{
+    <input class="btn btn-primary" type="submit" value="@Resources.SendShip" />
+    <input class="btn btn-default" type="button" value="@Resources.Cancel" data-dismiss="modal" />
+}
+@helper BotonesGuardarCancelarModalEnd()
+{
+    <input class="btn btn-primary" type="submit" value="Finalizar" />
+    <input class="btn btn-default" type="button" value="@Resources.Cancel" data-dismiss="modal" />
+}
+
+
+
+
+@helper BotonesGuardarCancelarModalString(string guardar, string cancelar)
+{
+    <input class="btn btn-primary" type="submit" value="@guardar"/>
+    <input class="btn btn-default" type="button" value="@cancelar" data-dismiss="modal"/>
+}
+@helper BotonesGuardarCancelarModalForgot()
+{
+    <input id="forgot" class="btn btn-primary" type="submit" style="display: none" value="@Resources.Remenber"/>
+    <input id="forgotSubmit" class="btn btn-primary" type="submit" value="@Resources.Save"/>
+    <input class="btn btn-default" type="button" value="@Resources.Cancel" data-dismiss="modal"/>
+}
+
+@helper BotonesGuardarCancelarModalVolviendoAlIndex(WebViewPage page, string controller, object routeValues)
+{
+    <input class="btn btn-primary" type="submit" value="@Resources.Save"/>
+    @BotonCancelarModalVolviendoAlIndex(page, controller, routeValues)
+}
+
+@helper BotonesBorrarCancelarModalVolviendoAlIndex(WebViewPage page, string controller, object routeValues)
+{
+    <input class="btn btn-primary" type="submit" value="@Resources.Delete"/>
+    @BotonCancelarModalVolviendoAlIndex(page, controller, routeValues)
+}
+
+@helper BotonCancelarModalVolviendoAlIndex(WebViewPage page, string controller, object routeValues)
+{ @BotonRedirectIndexModal(page, Resources.Cancel, controller, routeValues)}
+@helper BotonCrearModalVolviendoAlIndex(WebViewPage page, string controller, object routeValues, string nombre)
+{ @BotonRedirectIndexModalCrear(page, nombre, controller, routeValues)}
+@helper BotonVerCoincidenciasCrearPaciente(WebViewPage page, string controller, object routeValues, string nombre)
+{ @BotonRedirectIndexModal(page, nombre, controller, routeValues)}
+
+@helper BotonVolverAlIndexModal(WebViewPage page, string controller, object routeValues)
+{ @BotonRedirectIndexModal(page, Resources.Back, controller, routeValues)}
+
+@helper BotonRedirectIndexModal(WebViewPage page, string text, string controller, object routeValues)
+{ @page.Ajax.ActionLink(text, "Index", controller, routeValues, new AjaxOptions {InsertionMode = InsertionMode.Replace, UpdateTargetId = "modal"}, new {@class = "btn btn-default"})}
+@helper BotonRedirectIndexModalCrear(WebViewPage page, string text, string controller, object routeValues)
+{ @page.Ajax.ActionLink(text, "Index", controller, routeValues, new AjaxOptions {InsertionMode = InsertionMode.Replace, UpdateTargetId = "modal"}, new {@class = "btn btn-primary"}) }
+@helper BotonesGuardarCancelar()
+{
+    <input class="btn btn-primary" type="submit" value="@Resources.Save" id="btnSubmit"/>
+    <input class="btn btn-default" type="button" value="@Resources.Cancel" id="btnCancelar" data-dismiss="modal"/>
+}
+
+@helper BotonesGuardarCancelarVolviendoAlIndex(WebViewPage page, string controller, object routeValues = null)
+{
+    <input class="btn btn-primary" type="submit" value="@Resources.Save" id="btnSubmit"/>
+    @page.Html.ActionLink(@Resources.Cancel, "Index", controller, routeValues, new {@class = "btn btn-default"})
+}
+
+@helper BotonesBorrarCancelar()
+{
+    <input class="btn btn-primary" type="submit" value="@Resources.Delete"/>
+    <input class="btn btn-default" type="button" value="@Resources.Cancel" data-dismiss="modal"/>
+}
+@helper BotonClose()
+{
+    <input class="btn btn-default" type="button" value="@Resources.Close" data-dismiss="modal"/>
+}
+
+
+@helper Buscador(string id = null)
+{
+    var idInput = "filterText";
+    if (!string.IsNullOrEmpty(id))
+    {
+        idInput = id;
+    }
+
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" name="filterText" id="@idInput" class="form-control input-sm" placeholder="Buscar..."/>
+            <span class="input-group-addon glyphicon glyphicon-search"></span>
+        </div>
+    </div>
+}
+@helper BuscadorStatus(string id = null)
+{
+    var idInput = "filterText";
+    if (!string.IsNullOrEmpty(id))
+    {
+        idInput = id;
+    }
+
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" name="filterText" id="@idInput" class="form-control input-sm" placeholder="Buscar..."/>
+            <span class="input-group-addon glyphicon glyphicon-search"></span>
+        </div>
+        <div >
+            <div class="form-group"style="padding-top: 15px; padding-bottom: 15px;">
+                <input data-val="true" data-on-text="Si" data-off-text="No"  name="IsCold" data-on-color="success"  data-off-color="danger" type="checkbox" id="init"> Ingresados
+                <input data-val="true" data-on-text="Si" data-off-text="No"  name="IsCold" data-on-color="success"  data-off-color="danger" type="checkbox" id="viaje"> Transito
+                <input data-val="true" data-on-text="Si" data-off-text="No" name="IsCold" data-on-color="success" data-off-color="danger" type="checkbox" id="end"> Finalizados
+
+                <button type="button" style="float: right;margin-left: 10px;" onclick="buscar()" class="btn btn-success">Buscar</button>
+                <button type="button" style="float: right; margin-left: 10px;margin-right: 10px;" onclick="limpiar()" class="btn btn-warning">Limpiar</button>
+            </div>
+           
+        </div>
+        </div>
+}
+@helper BuscadorNoFilter(string id = null)
+{
+    var idInput = "filterText";
+    if (!string.IsNullOrEmpty(id))
+    {
+        idInput = id;
+    }
+
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" name="filterText" id="@idInput" class="form-control input-sm" placeholder="Buscar..." />
+            <span class="input-group-addon glyphicon glyphicon-search"></span>
+        </div>
+        <div>
+            <div class="form-group" style="padding-top: 15px; padding-bottom: 15px;">
+               <button type="button" style="float: right;margin-left: 10px;" onclick="buscar()" class="btn btn-success">Buscar</button>
+                <button type="button" style="float: right; margin-left: 10px;margin-right: 10px;" onclick="limpiar()" class="btn btn-warning">Limpiar</button>
+            </div>
+
+        </div>
+    </div>
+}
+@helper BuscadorFactura(IList<System.Web.Mvc.SelectListItem> lista)
+{
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Cuentas</label>
+                    <select class="form-control select2" style="width: 100%;" id="cuentaBox">
+                        @{
+                            foreach (var item in lista)
+                            {
+                                if (item.Selected)
+                                {
+                                    <option value="@item.Value" selected="selected">@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+
+
+
+                            }
+                        }
+                    </select>
+
+                   
+                        
+                </div><!-- /.form-group -->
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="rango" class="minimal">
+                        Incluir Fechas?
+                    </label>
+
+                </div><!-- /.col -->
+               
+             </div><!-- /.col -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Rango de Fechas:</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <input type="text" class="form-control pull-right" id="reservation">
+                    </div><!-- /.input group -->
+                </div><!-- /.form group -->
+               <div class="form-group">
+                       
+                        <br />
+                   <button type="button" style="float: right;margin-left: 10px;" onclick="buscar()" class="btn btn-success">Buscar</button>
+                   <button type="button" style="float: right; margin-left: 10px;margin-right: 10px;" onclick="limpiar()" class="btn btn-warning">Limpiar</button>
+                </div><!-- /.form-group -->
+
+               
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.box-body -->
+}
+
+
+  @helper BuscadorProductos(IList<System.Web.Mvc.SelectListItem> lista)
+{
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Cuentas</label>
+                    <select class="form-control select2" style="width: 100%;" id="cuentaBox">
+                        @{
+                            foreach (var item in lista)
+                            {
+                                if (item.Selected)
+                                {
+                                    <option value="@item.Value" selected="selected">@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+
+
+
+                            }
+                        }
+                    </select>
+
+                   
+                        
+                </div><!-- /.form-group -->
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="rango" class="minimal">
+                        Incluir Fechas?
+                    </label>
+
+                </div><!-- /.col -->
+               
+             </div><!-- /.col -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Rango de Fechas:</label>
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <input type="text" class="form-control pull-right" id="reservation">
+                    </div><!-- /.input group -->
+                </div><!-- /.form group -->
+               <div class="form-group">
+                       
+                        <br />
+                   <button type="button" style="float: right;margin-left: 10px;" onclick="buscar()" class="btn btn-success">Buscar</button>
+                   <button type="button" style="float: right; margin-left: 10px;margin-right: 10px;" onclick="limpiar()" class="btn btn-warning">Limpiar</button>
+                </div><!-- /.form-group -->
+
+               
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.box-body -->
+}
+
+@helper BuscadorAvanzado()
+{
+    <div class="form-group col-md-12">
+        <div class="input-group">
+            <span class="input-group-addon glyphicon glyphicon-search"></span>
+            <input type="text" name="filterText" id="filterText" class="form-control" placeholder="Buscar..."/>
+
+
+            <ul class="list-unstyled">
+                <li>
+                    <a data-placement="bottom" data-toggle="popover" data-title="Avanzado" type="button" data-html="true" href="#" id="login">Busqueda Avanzada</a>
+                </li>
+                <div id="popover-content" class="hide">
+
+
+                    <div>
+                        Psologia
+                        <input type="text" name="posologia" id="filterText2" placeholder="Filtro1" class="form-control" maxlength="5">
+                    </div>
+                    <div>
+                        <input type="text" placeholder="filtro2" class="form-control" maxlength="5">
+                    </div>
+                    <div>
+                        <input type="text" placeholder="filtro3" class="form-control" maxlength="5">
+                    </div>
+                    <div>
+                        <input type="text" placeholder="filtro4" class="form-control" maxlength="5">
+                    </div>
+                    <button type="submit" onclick=" additionalParametersAvanzado() " class="btn btn-primary">buscar</button>
+
+
+                </div>
+            </ul>
+        </div>
+    </div>
+}

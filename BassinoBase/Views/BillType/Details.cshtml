@@ -1,0 +1,24 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@model BassinoLibrary.ViewModels.BillTypeViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "BillTypeViewModel", Model.Id, string.Format("{0} {1}", Resources.Details, Resources.BilType))
+}
+
+
+<fieldset>
+
+	@Html.HiddenFor(model => model.Id)
+
+	@Html.PersonalDisplayFor(model => model.Description)
+
+</fieldset>
+
+

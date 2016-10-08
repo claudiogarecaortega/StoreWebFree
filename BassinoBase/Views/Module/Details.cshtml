@@ -1,0 +1,24 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@model BassinoLibrary.ViewModels.ModuleViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "ModuleViewModel", Model.Id, string.Format("{0} {1}", Resources.Details, Resources.Module))
+}
+
+
+<fieldset>
+
+	@Html.PersonalDisplayFor(model => model.Name)
+	@Html.PersonalDisplayFor(model => model.ModuleName)
+	@Html.PersonalDisplayFor(model => model.ModuleParent)
+
+</fieldset>
+
+

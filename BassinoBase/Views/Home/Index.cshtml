@@ -1,0 +1,928 @@
+﻿@using BassinoBase.Controllers
+@using BassinoBase.Models
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+<script>
+  
+    $(function () {
+        // Reference the auto-generated proxy for the hub.
+        var chat = $.connection.noficationsHub;
+        chat.client.nofifyClientAction = function (id, ids) {
+
+            var iuse = $("#idUser").val();
+            if (id > 0 && iuse != ids) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Notification/GetNotification",
+                    datatype: "JSON",
+                    data: { text: id },
+                    success: function (data) {
+                        var numeroNoti = Number($("#notificationNumber").text());
+                        var total = numeroNoti + 1;
+                        $("#notificationNumber").text(total);
+                        $("#notificationLabel").text("Ud tiene "+total+" notificaciones");
+                        if(data.Importance==3){
+                            var mlin = "<li id='notili_" + data.Id + "'><a href=" + data.Url + "  onclick='notificationReadToolbar(" + data.Id + ")'  data-target='#modal' data-toggle='modal' data-placement='top'><i class='fa fa-warning text-yellow'></i>  " + data.Message + "</a></li>";
+                            $("#notificationList").append(mlin);
+                            alertUrgentMessage("Ud tiene una Notificacion urgente en su bandea de entrada");
+                        }
+                        if (data.Importance == 4) {
+                            var mlin = "<li id='notili_" + data.Id + "'><a href=" + data.Url + " onclick='notificationReadToolbar(" + data.Id + ")'  data-target='#modal' data-toggle='modal' data-placement='top'><i class='fa fa-ban text-red'></i>  " + data.Message + "</a></li>";
+                            $("#notificationList").append(mlin);
+                            alertUrgentMessage("Ud tiene una Notificacion urgente en su bandea de entrada");
+                        }
+
+                        if (data.Importance == 2) {
+                            var mlin = "<li id='notili_" + data.Id + "'><a href=" + data.Url + " onclick='notificationReadToolbar(" + data.Id + ")'  data-target='#modal' data-toggle='modal' data-placement='top'><i class='fa fa-info text-blue'></i>  " + data.Message + "</a></li>";
+                            $("#notificationList").append(mlin);
+                            alertUrgentMessage("Ud tiene una Notificacion urgente en su bandea de entrada");
+                        }
+
+                        if (data.Importance == 1) {
+                            var mlin = "<li id='notili_" + data.Id + "'><a href=" + data.Url + " onclick='notificationReadToolbar(" + data.Id + ")'  data-target='#modal' data-toggle='modal' data-placement='top'><i class='fa fa-check text-yellow'></i>  " + data.Message + "</a></li>";
+                            $("#notificationList").append(mlin);
+                            alertUrgentMessage("Ud tiene una Notificacion urgente en su bandea de entrada");
+                        }
+
+                    }
+                });
+            }
+        };
+        // Create a function that the hub can call back to display messages.
+        chat.client.addNewMessageToPage = function (id) {
+
+            var idusuario = $("#idUser").val();
+            var result = jQuery.inArray(idusuario, id);
+            if ( result==0) {
+                var valueLi = "";
+                var numero = Number($("#valueNotification").text());
+                numero += 1;
+                $("#valueNotification").text(numero);
+                $("#liheader").text("Ud tiene : "+numero+" mensajes");
+                $.ajax({
+                    type: "POST",
+                    url: "/Messaging/GetNewMessages",
+                    datatype: "JSON",
+                    success: function (data) {
+                        $("#messageList").empty();
+                        $.each(data, function (i, item) {
+
+                            if(item.IsUrgent) {
+
+                                valueLi ="<li><a href='/Messaging/Details/"+item.id+"'  data-target='#modal' data-toggle='modal' data-placement='top'><div class='pull-left'><img src='dist/img/user2-160x160.jpg' class='img-circle' alt='User Image'></div><h4>" + item.from + "<small><i class='fa fa-clock-o'></i>" + item.time + "</small></h4><p>" + item.subject + "</p></a></li>";
+
+                                $('#messageList').append(valueLi);
+                                alertUrgentMessage("Ud tiene un mensaje urgente en su bandea de entrada");
+                            }
+                            else{
+                                valueLi ="<li style='background-color:red'><a href='/Messaging/Details/"+item.id+"'  data-target='#modal' data-toggle='modal' data-placement='top'><div class='pull-left'><img src='dist/img/user2-160x160.jpg' class='img-circle' alt='User Image'></div><h4>" + item.from + "<small><i class='fa fa-clock-o'></i>" + item.time + "</small></h4><p>" + item.subject + "</p></a></li>";
+                                $('#messageList').append(valueLi);
+                            }
+                        });
+
+                    }
+                });
+
+            }
+        };
+        $.connection.hub.start();
+
+    });
+
+
+</script>
+
+<div class="wrapper">
+    @Helpers.Modal("modal")
+    @Helpers.Modal("modalLogin")
+    <input type="hidden" id="idUser" name="UbicationsId" value="@ViewBag.userId">
+    <div class="modal fade" id="ModalAlert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body" id="MesasgeModal">
+                    Product Save.
+                </div>
+                <div class="modal-footer">
+                    
+                    <button type="button" data-dismiss="modal" class="btn btn-primary">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="index2.html" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>A</b>LT</span>
+            <!-- logo for regular state and mobile devices -->
+            <img src="" style="height: 50px;width: 205px;">
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <!-- Messages: style can be found in dropdown.less-->
+                    <li class="dropdown messages-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-envelope-o"></i>
+                            <span id="valueNotification" class="label label-success">@ViewBag.messagesCount</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header" id="liheader">Ud tiene @ViewBag.messagesCount mensajes</li>
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu" id="messageList">
+                                    @{
+                                    foreach (var message in ViewBag.messages)
+                                    {
+                                    var colorli = "";
+
+                                    if (message.IsUrgent)
+                                    { colorli = "style=background-color:red";}
+
+                                    <li @colorli>
+
+
+
+                                        <!-- start message -->
+                                        <a href='/Messaging/Details/@message.Id' data-target='#modal' data-toggle='modal' data-placement='top'>
+                                            <div class="pull-left">
+                                                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                            </div>
+                                            <h4>
+                                                @message.UserSend.FullName
+                                                <small><i class="fa fa-clock-o"></i>@message.GetTime()</small>
+                                            </h4>
+                                            <p>@message.Subject</p>
+                                        </a>
+                                    </li><!-- end message -->
+                                    }
+                                    }
+
+
+
+                                </ul>
+                            </li>
+                            <li class="footer"><a href="#" onclick="LoadPartial('Messaging/Index', 'mainDiv');">Ver todos los mensajes</a></li>
+                        </ul>
+                    </li>
+                    <!-- Notifications: style can be found in dropdown.less -->
+                    <li class="dropdown notifications-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="label label-warning" id="valueAlert"> @ViewBag.CountAlert</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">Ud Tiene :<span id="valueAlertNoti"> @ViewBag.CountAlert</span> Alertas</li>
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu">
+                                    @{
+                                    foreach (var cumple in ViewBag.UsersBirthday)
+                                    {
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-birthday-cake"></i> hoy es Cumpleañoñs de : @cumple.FullName enviale a una felicitacion.
+                                        </a>
+                                    </li>
+                                    }
+                                    }
+                                    @{
+                                    foreach (var alert in ViewBag.Alerts)
+                                    {
+                                    int va = alert.Importance;
+                                    switch (va)
+                                    {
+                                    case 1:
+                                    {
+                                    <li>
+                                        <a href="#" onclick="alertReadToolbar(@alert.Id)">
+                                            <i class="fa fa-ban text-red"></i> @alert.Description
+                                        </a>
+                                    </li>
+                                    break;
+                                    }
+                                    case 2:
+                                    {
+                                    <li>
+                                        <a href="#" onclick="alertReadToolbar(@alert.Id)">
+                                            <i class="fa fa-info text-yellow"></i> @alert.Description
+                                        </a>
+                                    </li>
+                                    break;
+                                    }
+                                    case 3:
+                                    {
+                                    <li>
+                                        <a href="#" onclick="alertReadToolbar(@alert.Id)">
+                                            <i class="fa fa-warning text-blue"></i> @alert.Description
+                                        </a>
+                                    </li>
+
+                                    break;
+                                    }
+                                    case 4:
+                                    {
+                                    <li>
+                                        <a href="#" onclick="alertReadToolbar(@alert.Id)">
+                                            <i class="fa fa-check text-green"></i> @alert.Description
+                                        </a>
+                                    </li>
+
+                                    break;
+                                    }
+
+                                    }
+
+                                    }
+                                    }
+
+
+                                </ul>
+                            </li>
+                            <li class="footer"><a href="#">Ver Toda las Alertas</a></li>
+                        </ul>
+                    </li>
+                    <!-- Tasks: style can be found in dropdown.less -->
+                    <li class="dropdown tasks-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-flag-o"></i>
+                            <span class="label label-danger" id="notificationNumber">@ViewBag.NotiCount</span>
+                        </a>
+                        <ul class="dropdown-menu" style="width: auto;">
+                            <li class="header" id="notificationLabel">Ud tiene : @ViewBag.NotiCount Notificaciones</li>
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu" id="notificationList">
+                                    @{
+                                    foreach (var alert in ViewBag.Notificaciones)
+                                    {
+                                    int va = Convert.ToInt32(alert.Importance);
+                                    switch (va)
+                                    {
+                                    case 1:
+                                    {
+                                    <li id='notili_@alert.Id'>
+                                        <a href="@alert.Url" data-target='#modal' data-toggle='modal' data-placement='top' onclick="notificationReadToolbar(@alert.Id)">
+                                            <i class="fa fa-ban text-red"></i> @alert.Message
+                                        </a>
+                                    </li>
+                                    break;
+                                    }
+                                    case 2:
+                                    {
+                                    <li id='notili_@alert.Id'>
+                                        <a href="@alert.Url" data-target='#modal' data-toggle='modal' data-placement='top' onclick="notificationReadToolbar(@alert.Id)">
+                                            <i class="fa fa-info text-yellow"></i> @alert.Message
+                                        </a>
+                                    </li>
+                                    break;
+                                    }
+                                    case 3:
+                                    {
+                                    <li id='notili_@alert.Id'>
+                                        <a href="@alert.Url" data-target='#modal' data-toggle='modal' data-placement='top' onclick="notificationReadToolbar(@alert.Id)">
+                                            <i class="fa fa-warning text-blue"></i> @alert.Message
+                                        </a>
+                                    </li>
+
+                                    break;
+                                    }
+                                    case 4:
+                                    {
+                                    <li id='notili_@alert.Id'>
+                                        <a href="@alert.Url" data-target='#modal' data-toggle='modal' data-placement='top' onclick="notificationReadToolbar(@alert.Id)">
+                                            <i class="fa fa-check text-green"></i> @alert.Message
+                                        </a>
+                                    </li>
+
+                                    break;
+                                    }
+
+                                    }
+
+                                    }
+                                    }
+                                </ul>
+                            </li>
+                            <li class="footer">
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Notification")', 'mainDiv') ">Ver todas las notificaciones</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="@ViewBag.Imagen" class="user-image" alt="User Image">
+                            <span class="hidden-xs">@ViewBag.FullName</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="@ViewBag.Imagen" class="img-circle" alt="User Image">
+                                <p>
+                                    @ViewBag.FullName - @ViewBag.Position
+                                    <small>@Resources.MemberSince @ViewBag.DateResgister</small>
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#" onclick="LoadPartial('User/_UserProfile', 'mainDiv')" class="btn btn-default btn-flat">@Resources.Profile</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="/User/LogOff" class="btn btn-default btn-flat">@Resources.SignOut</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    <li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img src="@ViewBag.Imagen" class="img-circle" alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p>@ViewBag.FullName </p>
+                    <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                </div>
+            </div>
+            <!-- search form -->
+            <form action="#" method="get" class="sidebar-form">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search...">
+                    <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </form>
+            <!-- /.search form -->
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu">
+                <li class="treeview"><a href="#" onclick="LoadPartial('@Url.Action("Content", "Home")', 'mainDiv') "><i class="fa fa-home"></i><span>Inicio </span></a></li>
+                @{
+                foreach (var module in ViewBag.roles)
+                {
+                if (module.Module == "GestionGeneral")
+                {
+                <li class="active treeview">
+                    <a href="#">
+                        <i class="fa fa-dashboard"></i> <span>@Resources.GestionGeneral</span> <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu" id="GestionGeneral">
+                        @{
+                        foreach (var item in module.SubStrings)
+                        {
+                        if (item == "Productos")
+                        {
+                            <li id="Prod" class="active"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Product")', 'mainDiv', 'GestionGeneral', 'Prod') "><i class="fa fa-cube"></i> @Resources.Products</a></li>
+                            <li id="Alma"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Almacen")', 'mainDiv', 'GestionGeneral', 'Alma') "><i class="fa fa-industry"></i> Almacenes</a></li>
+                            <li id="Stoc"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Stock")', 'mainDiv', 'GestionGeneral', 'Stoc') "><i class="fa fa-cubes"></i> Stocks </a></li>
+                            <li id="StocMov"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "MovimientosStock")', 'mainDiv', 'GestionGeneral', 'StocMov') "><i class="fa fa-refresh"></i> Movimientos de Stock </a></li>
+                            
+                            
+                        }
+                        if (item == "Origens")
+                        {
+                        <li id="Origen"><a href="#" onclick="LoadPartialMenu('@Url.Action("_IndexOrigen", "Client")', 'mainDiv','GestionGeneral','Origen') "><i class="fa fa-map-pin"></i> @Resources.Origen</a></li>
+                        }
+                        if (item == "Cuentass")
+                        {
+                        <li id="Cuentas"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Client")', 'mainDiv','GestionGeneral','Cuentas') "><i class="fa fa-sitemap "></i> @Resources.Accounts</a></li>
+                        }
+                        if (item == "Destinos")
+                        {
+                        <li id="Destino"><a href="#" onclick="LoadPartialMenu('@Url.Action("_Index", "Client")', 'mainDiv','GestionGeneral','Destino') "><i class="fa fa-plane"></i> @Resources.ClientDestination</a></li>
+                        }
+                            if (item == "Destino")
+                        {
+                        <li id="Prov"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Provider")', 'mainDiv','GestionGeneral','Prov') "><i class="fa  fa-shopping-cart"></i> @Resources.Providers</a></li>
+                        }
+                        if (item == "Cars")
+                        {
+                            <li id="Car"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Car")', 'mainDiv','GestionGeneral','Car') "><i class="fa  fa-truck"></i> Camiones</a></li>
+                        }
+                        }
+
+}
+
+
+                        <li id="StocMovPro"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "PedidosProducto")', 'mainDiv', 'GestionGeneral', 'StocMovPro') "><i class="fa fa-truck"></i> Pedidos de Productos </a></li>
+
+                    </ul>
+                </li>
+                }
+                if (module.Module == "GestionLogisticas")
+                {
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-ship"></i>
+                        <span>@Resources.GestionLogistica</span><i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu" id="GestionLogistica">
+                        @{
+                    foreach (var item in module.SubStrings)
+                    {
+                        if (item == "RecepcionMercaderia")
+                        {
+                            <li id="inbound"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Inbound")', 'mainDiv','GestionLogistica','inbound') "><i class="fa fa-barcode"></i>@Resources.RecepcionMercaderia</a></li>
+                        }
+                        if (item == "GestionCargas")
+                        {
+                            <li id="cargas"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Shipment")', 'mainDiv','GestionLogistica','cargas')"><i class="fa fa-truck"></i> @Resources.GestionCargas</a></li>
+                        }
+                        if (item == "CargasStatuss")
+                        {
+                            <li id="status"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "ShipmentTrack")', 'mainDiv','GestionLogistica','status') "><i class="fa fa-exclamation-circle"></i> @Resources.CargasStatus</a></li>
+                        }
+                        if (item == "RecuperarCargas")
+                        {
+                            <li id="RecuperarCargas"><a href="#" onclick="LoadPartialMenu('@Url.Action("IndexRestore", "Inbound")', 'mainDiv','GestionLogistica','RecuperarCargas')"><i class="fa fa-recycle"></i> Recuperar Cargas</a></li>
+                        }
+                    }
+}
+                        
+                    </ul>
+
+                </li>
+                }
+              
+                    if (module.Module == "GestionComercial")
+                    {
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-pie-chart"></i>
+                        <span>@Resources.GestionComercial</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+
+                    <ul class="treeview-menu" id="GestionComercial">
+
+
+                        @foreach (var item in module.SubStrings)
+                        {
+                            if (item == "Plantillas")
+                            {
+                                <li id="ContractTemplate"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "ContractTemplate")', 'mainDiv','GestionComercial','ContractTemplate') "><i class="fa fa-file-pdf-o"></i> Plantillas</a></li>
+                            }
+                            if (item == "Facturacion")
+                            {
+                                <li id="IndexFacturacion"><a href="#" onclick="LoadPartialMenu('@Url.Action("IndexFacturacion", "Shipment")', 'mainDiv','GestionComercial','IndexFacturacion') "><i class="fa fa-money"></i> Facturacion</a></li>
+                            }
+                            if (item == "Contratos")
+                            {
+                                <li><a href="pages/charts/flot.html"><i class="fa fa-folder-open"></i> @Resources.Contratos</a></li>
+                            }
+                            if (item == "Servicios")
+                            {
+                                <li><a href="pages/charts/inline.html"><i class="fa fa-industry"></i> @Resources.Servicios</a></li>
+                            }
+
+
+                        }
+                    </ul>
+                </li>
+                }
+               
+                if (module.Module == "Reportes")
+                {
+                @*<li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-archive"></i>
+                        <span>@Resources.Reports</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-cubes"></i> @Resources.Products</a></li>
+                        <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-map-pin"></i> @Resources.Origen</a></li>
+                        <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-sitemap"></i> @Resources.Accounts</a></li>
+                        <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-plane"></i> @Resources.ClientDestination</a></li>
+                        <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-truck"></i> @Resources.Provider</a></li>
+                    </ul>
+                </li>*@
+                }
+
+                }
+                }
+            @*<li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-file-word-o"></i>
+                        <span>Contratos</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">                        
+                    <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-map-pin"></i> @Resources.Origen</a></li>
+                    <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-sitemap"></i> @Resources.Accounts</a></li>
+                    <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-plane"></i> @Resources.ClientDestination</a></li>
+                    <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Report")', 'mainDiv') "><i class="fa fa-truck"></i> @Resources.Provider</a></li>
+                    </ul>
+                </li>*@
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-truck"></i>
+                        <span>Gestion de Ventas</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu" id="GestionContable">
+                        <li id="Cuentas"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Client")', 'mainDiv','GestionContable','Cuentas') "><i class="fa fa-users "></i> Clientes</a></li>
+                        <li id="Creditos"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Credito")', 'mainDiv','GestionContable','Creditos') "><i class="fa fa-cc-visa"></i> Credito</a></li>
+                        <li id="CreditosCuotas"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Cuotas")', 'mainDiv','GestionContable','CreditosCuotas') "><i class="fa fa-dollar "></i> Cuotas de Credito</a></li>
+                        <li id="ventasMenu"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Venta")', 'mainDiv','GestionContable','ventasMenu') "><i class="fa fa-dollar "></i> Ventas</a></li>
+                        <li id="Pedidos"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Pedidos")', 'mainDiv','GestionContable','Pedidos') "><i class="fa fa-laptop"></i> Pedidos </a></li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-money"></i>
+                        <span>Gestion Contable</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu" id="Gestionventas">
+                        <li id="banca"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Bancaria")', 'mainDiv','Gestionventas','banca') "><i class="fa fa-institution "></i> Informacion Bancaria</a></li>
+                        <li id="pagar"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "CuentasPagar")', 'mainDiv','Gestionventas','pagar') "><i class="fa fa-money"></i> Cuentas por Pagar</a></li>
+                        <li id="cobrar"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "CuentasCobrar")', 'mainDiv','Gestionventas','cobrar') "><i class="fa fa-money"></i> Cuentas por Cobrar</a></li>
+                        <li id="ingresos"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Report")', 'mainDiv','Gestionventas','ingresos') "><i class="fa fa-line-chart"></i> Ingresos Mensuales</a></li>
+                        <li id="pagos"><a href="#" onclick="LoadPartialMenu('@Url.Action("Index", "Report")', 'mainDiv','Gestionventas','pagos') "><i class="fa fa-area-chart"></i> Pagos Mensuales</a></li>
+                    </ul>
+                </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-envelope"></i>
+                    <span>@Resources.Messaging</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="#" onclick="LoadPartial('@Url.Action("Index", "Messaging")', 'mainDiv') "><i class="fa fa-inbox"></i> @Resources.Inbox</a></li>
+                    <li><a href="#" onclick="LoadPartial('@Url.Action("IndexOut", "Messaging")', 'mainDiv') "><i class="fa fa-inbox"></i> @Resources.OutBox</a></li>
+
+                </ul>
+            </li>
+
+            @{
+                if (ViewBag.admin)
+                {
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-cogs"></i>
+                            <span>@Resources.Administration</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("_index", "User")', 'mainDiv') ">
+                                    <i class=" fa fa-user-secret"></i> @Resources.Users
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Roles")', 'mainDiv') ">
+                                    <i class=" fa fa-users"></i> @Resources.UsersRoles
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Module")', 'mainDiv') ">
+                                    <i class=" fa fa-plug"></i> @Resources.Module
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Actions")', 'mainDiv') ">
+                                    <i class=" fa fa-refresh"></i> @Resources.Actions
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Bill")', 'mainDiv') ">
+                                    <i class=" fa fa-file-word-o"></i>@Resources.BillManager
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "BillType")', 'mainDiv') ">
+                                    <i class=" fa fa-file-excel-o"></i> @Resources.BillType
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "PackageType")', 'mainDiv') ">
+                                    <i class=" fa fa-suitcase "></i> @Resources.PackageTypeManager
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "TaxCondition")', 'mainDiv') ">
+                                    <i class=" fa fa-legal "></i> @Resources.TaxCondition
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Ubication")', 'mainDiv') ">
+                                    <i class=" fa fa-globe"></i> @Resources.Ubication
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "MeasureUnit")', 'mainDiv') ">
+                                    <i class=" fa  fa-balance-scale"></i> @Resources.MeasureUnit
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Notification")', 'mainDiv') ">
+                                    <i class=" fa  fa-flag"></i> @Resources.Notification
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Alert")', 'mainDiv') ">
+                                    <i class=" fa fa-bell"></i> @Resources.Alert
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Services")', 'mainDiv') ">
+                                    <i class=" fa fa-industry"></i> @Resources.Services
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Categoria")', 'mainDiv') ">
+                                    <i class=" fa fa-industry"></i> Categorias
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="LoadPartial('@Url.Action("Index", "Etiquetas")', 'mainDiv') ">
+                                    <i class=" fa fa-industry"></i> Etiquetas
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+            }
+             
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div style="display: inline-block">
+                <ol class="breadcrumb" style="position: static; float: left" id="infoId">
+                    <li><a href="#" onclick="LoadPartial('@Url.Action("index", "home")', 'mainDiv' ) " id=" moduloid"><i class="fa fa-home"></i> Incio</a></li>
+                    <li class="active" id="SubModulo">Dashboard</li>
+                </ol>
+            </div>
+            <div style="text-align: center">
+                <h2 id="titleUpdate" style="font-size: 44px;">
+                    Incio
+                    <small></small>
+                </h2>
+            </div>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="row" style="display: none">
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-aqua">
+                    <div class="inner">
+                        <h3>@ViewBag.Neworders</h3>
+                        <p>@Resources.NewOrderIndex</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-bag"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-green">
+                    <div class="inner">
+                        <h3>
+                            @ViewBag.ClientCount<sup style="font-size: 20px">%</sup>
+                        </h3>
+                        <p>@Resources.ClientIndex</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-yellow">
+                    <div class="inner">
+                        <h3>@ViewBag.UsersCount</h3>
+                        <p>@Resources.UsersIndex</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+                <!-- small box -->
+                <div class="small-box bg-red">
+                    <div class="inner">
+                        <h3>@ViewBag.CompleteSend</h3>
+                        <p>@Resources.OrdersIndex</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div><!-- ./col -->
+        </div><!-- /.row -->
+        <!-- Main row -->
+        <div class="row">
+            <div id="alertDiv"></div>
+
+            <div id="mainDiv" class="box-body">
+
+            </div><!-- /.row (main row) -->
+
+        </div><!-- /.row (main row) -->
+
+    </section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> 3.2.3
+        </div>
+        <strong>Copyright &copy; 2014-2015 <a href="#"> </a>.</strong> All rights reserved.
+    </footer>
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+            <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Home tab content -->
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h3 class="control-sidebar-heading">Recent Activity</h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="javascript::;">
+                            <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+                                <p>Will be 23 on April 24th</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <i class="menu-icon fa fa-user bg-yellow"></i>
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+                                <p>New phone +1(800)555-1234</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+                                <p>nora@example.com</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <i class="menu-icon fa fa-file-code-o bg-green"></i>
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+                                <p>Execution time 5 seconds</p>
+                            </div>
+                        </a>
+                    </li>
+                </ul><!-- /.control-sidebar-menu -->
+                <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="javascript::;">
+                            <h4 class="control-sidebar-subheading">
+                                Custom Template Design
+                                <span class="label label-danger pull-right">70%</span>
+                            </h4>
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <h4 class="control-sidebar-subheading">
+                                Update Resume
+                                <span class="label label-success pull-right">95%</span>
+                            </h4>
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <h4 class="control-sidebar-subheading">
+                                Laravel Integration
+                                <span class="label label-warning pull-right">50%</span>
+                            </h4>
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript::;">
+                            <h4 class="control-sidebar-subheading">
+                                Back End Framework
+                                <span class="label label-primary pull-right">68%</span>
+                            </h4>
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                            </div>
+                        </a>
+                    </li>
+                </ul><!-- /.control-sidebar-menu -->
+            </div><!-- /.tab-pane -->
+            <!-- Stats tab content -->
+            <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div><!-- /.tab-pane -->
+            <!-- Settings tab content -->
+            <div class="tab-pane" id="control-sidebar-settings-tab">
+                <form method="post">
+                    <h3 class="control-sidebar-heading">General Settings</h3>
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Report panel usage
+                            <input type="checkbox" class="pull-right" checked>
+                        </label>
+                        <p>
+                            Some information about this general settings option
+                        </p>
+                    </div><!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Allow mail redirect
+                            <input type="checkbox" class="pull-right" checked>
+                        </label>
+                        <p>
+                            Other sets of options are available
+                        </p>
+                    </div><!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Expose author name in posts
+                            <input type="checkbox" class="pull-right" checked>
+                        </label>
+                        <p>
+                            Allow the user to show his name in blog posts
+                        </p>
+                    </div><!-- /.form-group -->
+                    <h3 class="control-sidebar-heading">Chat Settings</h3>
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Show me as online
+                            <input type="checkbox" class="pull-right" checked>
+                        </label>
+                    </div><!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Turn off notifications
+                            <input type="checkbox" class="pull-right">
+                        </label>
+                    </div><!-- /.form-group -->
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Delete chat history
+                            <a href="javascript::;" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
+                        </label>
+                    </div><!-- /.form-group -->
+                </form>
+            </div><!-- /.tab-pane -->
+        </div>
+    </aside><!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+    immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+</div><!-- ./wrapper -->

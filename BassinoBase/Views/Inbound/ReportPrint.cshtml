@@ -1,0 +1,124 @@
+﻿@using BassinoLibrary.Helpers
+@model BassinoLibrary.ViewModels.InboundViewModel
+<div class='modal-content' style="width: auto">
+    <div class='modal-header' id="divHeader">
+       </div>
+     <div class='modal-body'>
+        <table>
+            <tr>
+                <th>
+                    @Html.LabelFor(mo => mo.DateIn)
+                </th>
+                <th>
+                    @Html.LabelFor(mo => mo.DateTicket)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Model.DateIn
+                </td>
+                <td>
+                    @(Model.DateTicket)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(mo => mo.ClientOrigen)
+                </th>
+                <th>
+                    @Html.LabelFor(mo => mo.BillType)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Model.ClientOrigen
+                </td>
+                <td>
+                    @(Model.BillType)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(mo => mo.Bill)
+                </th>
+                <th>
+                    @Html.LabelFor(mo => mo.BillNumber)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Model.Bill
+                </td>
+                <td>
+                    @(Model.BillNumber)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(mo => mo.PriceDecimal)
+                </th>
+                <th>
+                    @Html.LabelFor(mo => mo.Product)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Model.PriceDecimal
+                </td>
+                <td>
+                    @(Model.Product)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(mo => mo.Description)
+                </th>
+                <th>
+                    @Html.LabelFor(mo => mo.Kilos)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Model.Description
+                </td>
+                <td>
+                    @(Model.Kilos)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(mo => mo.IsCold)
+                </th>
+                <th>
+                    @Html.LabelFor(mo => mo.UserControl)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Model.IsCold
+                </td>
+                <td>
+                    @(Model.UserControl)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(mo => mo.ClientFrom)
+                </th>
+                <th>
+                    @Html.LabelFor(mo => mo.ClientTo)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Model.ClientFrom
+                </td>
+                <td>
+                    @(Model.ClientTo)
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class='modal-footer'></div>
+</div>
+

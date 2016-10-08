@@ -1,0 +1,51 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.ContractTemplateViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayoutText.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, Resources.ContractTemplate))
+}
+<script>
+    $(document).ready(function () {
+        $("input[type=\"radio\"]").bootstrapSwitch();
+        $("input[type=\"checkbox\"]").bootstrapSwitch();
+    });
+    $(function () {
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        // CKEDITOR.replace('editor1');
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
+    });
+</script>
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.PersonalSEditorFor(model => model.Description)
+    <div class="box" style="    border-top: none;">
+        <div class="box-header">
+            <h3 class="box-title">
+                Descripcion Completa <small></small>
+            </h3>
+            <!-- tools box -->
+
+        </div><!-- /.box-header -->
+        <div class="box-body pad">
+            <textarea class="textarea" name="Contrato" id="Contrato" placeholder="Ingrese el texto" style="width: 100%; height: 600px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+
+        </div>
+    </div>
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

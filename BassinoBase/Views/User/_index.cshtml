@@ -1,0 +1,47 @@
+﻿@using BassinoBase.Controllers
+@using BassinoBase.Models
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+ <div class="list-group">
+    <a class="list-group-item" style="display: inline;" data-target="#modal" data-toggle="modal" href="~/User/Register"><i class="fa fa-pencil fa-fw"></i>&nbsp; @Resources.Create @Resources.New @Resources.User</a>
+</div>
+
+
+<script>
+
+    $(document).ready(function() {
+        $("#Buscar").keyup(function(e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        var message = "@ViewBag.Title <small>Panel de Control</small>";
+        $("#titleUpdate").text("");
+        $("#titleUpdate").append(message);
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+
+</script>
+
+@Helpers.Buscador("Buscar")
+@(Html.KendoGrid().Grid<UserExtendedViewModel, UserController>(GridDetailsMode.Modal)
+      .Name("GridUser")
+      .Columns(columns =>
+      {
+          columns.Bound(p => p.NombreApellido);
+          columns.Bound(p => p.FullName);
+          columns.Bound(p => p.Mail);
+      })
+      .EditarBorrar(true, true)
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Model(conf => conf.Id(model => model.Id))
+          .PageSize(10)
+              .Read(read => read.Action("GridInfo", "User"))
+      ))

@@ -1,0 +1,23 @@
+@using Interfaz.Library.Resourses
+@using Interfaz.Library.Helpers
+@model BassinoLibrary.ViewModels.MessagingViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Delete, Resources.Messaging))
+}
+
+<fieldset>
+
+	@Html.PersonalDisplayFor(model => model.Description)
+				
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesBorrarCancelar()
+}

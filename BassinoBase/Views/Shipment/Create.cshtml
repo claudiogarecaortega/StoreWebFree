@@ -1,0 +1,226 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@using Kendo.Mvc.UI
+
+@model BassinoLibrary.ViewModels.ShipmentViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader("Crear Nuevo Viaje")
+}
+<script>
+    $(document).ready(function () {
+     
+
+        //$("#TotalKilos").attr("disabled", "disabled");
+        //$("#TotalPakages").attr("disabled", "disabled");
+    });
+    function readData() {
+        var cargas = $("#Cargars").val();
+        alert("ok " + cargas);
+    }
+    function getIdFrom() {
+        return {
+            text: $("#UbicationToId").val(),
+            ubications: $("#UbicationsId").val()
+        };
+    }
+    function readRoute(vector) {
+        $("#UbicationsId").val(vector);
+        $('#Cargars').data('kendoMultiSelect').dataSource.read();
+    }
+    function read() {
+        $('#Cargars').data('kendoMultiSelect').dataSource.read();
+    }
+
+    function selectFunction(e) {
+        var dataItem = this.dataSource.view()[e.item.index()];
+        alert("event :: select (" + dataItem.Text + " : " + dataItem.Value + ")");
+    }
+
+    function sumData(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Inbound/GetProductsPrice",
+            datatype: "JSON",
+            data: { text: id },
+            success: function (data) {
+                var kilosTotal = 0;
+                kilosTotal = Number($("#TotalKilos").val());
+                var totalPakage =0;
+                 totalPakage = Number($("#TotalPakages").val());
+                //var totalPakage = $("#TotalPakages").text();
+                 kilosTotal += parseFloat(data.kilos);
+                 totalPakage += parseFloat(1);
+               
+                $("#TotalKilos").text(kilosTotal);
+                $("#TotalPakages").text(totalPakage);
+                //$("#textbox1").removeAttr("disabled"); 
+                
+                $("#TotalKilos").val(kilosTotal);
+                $("#TotalPakages").val(totalPakage);
+
+                
+               // $('#tableInboud tbody').append('<tr id=item_' + data.id + '><td>' + data.description + '</td><td>' + data.measure + '</td><td>' + data.quantity + "</td></tr>");
+            }
+        });
+    }
+    
+    function removeItem(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Inbound/GetProductsPrice",
+            data:{text:id},
+            datatype: "JSON",
+            success: function (data) {
+                var kilosTotal = 0;
+                kilosTotal = parseFloat($("#TotalKilos").val());
+                var totalPakage = 0;
+                totalPakage = parseFloat($("#TotalPakages").val());
+                //var totalPakage = $("#TotalPakages").text();
+                kilosTotal -= Number(data.kilos);
+                totalPakage -= Number(1);
+                $("#TotalKilos").val(kilosTotal);
+                $("#TotalPakages").val(totalPakage);
+                $("#TotalKilos").text(kilosTotal);
+                $("#TotalPakages").text(totalPakage);
+                //$("#textbox1").removeAttr("disabled"); 
+              //  $("#item_" + id).remove();
+                }
+        });
+    }
+    function saveCurrent(multi) {
+        multi._savedOld = multi.value().slice(0);
+    }
+</script>
+<fieldset>
+
+	@Html.ValidationSummary(true)
+    <input type="hidden" id="UbicationsId" name="UbicationsId" value=>
+    <input type="hidden" id="origen" name="origen" value="0">
+    <div style="margin-right: 10px; color: green; font-weight: bold;" id="Car"><span> </span></div>
+    @Html.HiddenFor(model => model.CarId)
+    @(Html.AutocompleteFor<ShipmentViewModel, int?>(model => model.UbicationFrom)
+          .TextField<UbicationViewModel>(diag => diag.DescriptionCompleta)
+          .ValueField<UbicationViewModel>(diag => diag.Id)
+          .Id(model => model.UbicationFromId)
+          .Source("GetAutoComplete", "Ubication"))
+    @(Html.AutocompleteFor<ShipmentViewModel, int?>(model => model.UbicationTo)
+          .TextField<UbicationViewModel>(diag => diag.DescriptionCompleta)
+          .ValueField<UbicationViewModel>(diag => diag.Id)
+          .Id(model => model.UbicationToId)
+          .Source("GetAutoComplete", "Ubication"))
+    @Html.Label("Ubicaciones Internas")
+    @(Html.Kendo().MultiSelect()
+                  .Name("UbicationRoute")
+          .DataTextField("UbicationName")
+          .DataValueField("id")
+          //.Placeholder("Seleccione los sub destinos...")
+          .AutoBind(true)
+                  .Events(x => x.Select(@<text>
+    function(e) {
+                                            var vector=$("#UbicationsId").val();
+                                            vector=vector +","+this.dataSource.view()[e.item.index()].id;
+    $("#UbicationsId").val(vector);
+
+    readRoute(vector);
+
+    }
+                                 </text>))
+    .Events(x => x.Change(@<text>
+    function (e) {
+
+    var previous = this._savedOld;
+    // These are current values.
+    var current = this.value();
+    // Let's save it for the next time
+    saveCurrent(this);
+
+    // The difference between previous and current are removed elements
+    var diff = $(previous).not(current).get();
+    if(diff.length>0){
+
+    
+    var vector=$("#UbicationsId").val();
+   // vector=vector +","+diff[0];
+    var i=','+diff[0];
+                              vector=vector.replace(i,'')
+    $("#UbicationsId").val(vector);
+    readRoute(vector);
+    
+    }
+
+    // The difference between current and previous, are added elements
+    diff = $(current).not(previous).get();
+    console.log("added", diff);
+    }
+    </text>))
+        //.Value(new[] { new { ProductName = "Chang", ProductID = 2 }, new { ProductName = "Uncle Bob's Organic Dried Pears", ProductID = 7 } })
+              .DataSource(source =>
+              {
+                  source.Read(read =>
+                  {
+                      read.Action("GetUbications", "Shipment");
+                  })
+                  .ServerFiltering(true);
+              }).Value(ViewBag.ubications)
+)
+    @Html.Label("Cargas para Enviar")
+   @(Html.Kendo().MultiSelect()
+           .Name("Cargars") //The name of the multiselect is mandatory. It specifies the "id" attribute of the widget.
+    .DataTextField("name") //Specifies which property of the Product to be used by the multiselect as a text.
+    .DataValueField("id") //Specifies which property of the Product to be used by the multiselect as a value.
+    .Filter(FilterType.Contains)
+          
+    .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetProducts", "Shipment").Data("getIdFrom"); //Set the Action and Controller name
+        })
+        .ServerFiltering(true); //If true the DataSource will not filter the data on the client.
+    }).Events(e=>e.Select(@<text>
+                              function(e) {
+    
+                              var dataItem = this.dataSource.view()[e.item.index()];
+                                sumData(dataItem.id);
+    
+    }
+                           </text>)).Events(x => x.Change(@<text>
+                                                              function (e) {
+    
+    var previous = this._savedOld;
+    // These are current values.
+    var current = this.value();
+    // Let's save it for the next time
+    saveCurrent(this);
+
+    // The difference between previous and current are removed elements
+    var diff = $(previous).not(current).get();
+                                                              if(diff.length>0){
+       
+    removeItem(diff[0]);                                             
+    }
+
+    // The difference between current and previous, are added elements
+    diff = $(current).not(previous).get();
+    console.log("added", diff);
+    }
+                                                           </text>))
+           .Value(ViewBag.cargasLoad)
+         )
+    @Html.PersonalTextAreaFor(model => model.Observations,"",6)
+    @Html.PersonalSEditorFor(model => model.TotalKilos)
+    @Html.PersonalSEditorFor(model => model.TotalPakages)
+  
+   </fieldset>
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

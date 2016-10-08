@@ -1,0 +1,18 @@
+﻿@using BassinoLibrary.Resource
+@if (ViewBag.editar)
+{
+    <a href="/Client/EditDestino/#= Id #" data-target="\\#modal" data-backdrop='static' data-keyboard='false' data-toggle="modal" data-placement="top" title="Responder"><i class="fa fa-pencil fa-2x"></i></a>
+}
+@if (ViewBag.borrar)
+{
+    <a href="/Client/Delete/#= Id #" data-target="\\#modal" data-backdrop='static' data-keyboard='false' data-toggle="modal" data-placement="top" title="Leer"><i class="fa fa-trash fa-2x"></i></a>
+}
+@if (ViewBag.imprimir)
+{
+    <a href="/Report/PrintClientByIdDestino/#= Id #" target="_blank" data-backdrop='static' data-keyboard='false' data-placement="top" title="Imprimir"><i class="fa fa-print fa-2x"></i></a>
+}
+
+
+
+
+

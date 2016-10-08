@@ -1,0 +1,16 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+using BassinoLibrary.Resource;
+using System.ComponentModel.DataAnnotations;
+using Domain.IdentificableObject;
+
+namespace <#= Model.Namespace #>
+{ 
+    public class <#= Model.Name #> :IIdentifiableObject
+    {
+		public int Id { get; set; }
+		public int? Secuencia { get; set; }
+        [Display(ResourceType = typeof(Resources), Name = "Description")]
+        public string Descripcion { get; set; }
+	}
+}

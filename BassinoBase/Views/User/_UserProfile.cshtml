@@ -1,0 +1,30 @@
+﻿@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoBase.Models.ProfileViewModel
+<div class="box-body">
+    @using (Ajax.BeginForm("UpdatePersonal", "Manage", new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "modal", OnBegin = "block();", OnComplete = "unBlock();" },
+    new { @role = "form", @id = "formId" }))
+    {
+        <fieldset>
+            @Html.AntiForgeryToken()
+            @Html.PersonalSEditorForFull(model => model.Name, Resources.Name)
+            @Html.PersonalSEditorForFull(model => model.LastName, Resources.LastName)
+
+            @Html.PersonalSEditorForFull(model => model.Email, Resources.Email)
+            @Html.PersonalSEditorForFull(model => model.UserName, Resources.UserName)
+            @(Html.DateTimePicker(model => model.BornDate)
+          .Label()
+          .SetID("StrDateTime")
+          .ChangeMonth()
+          .ChangeYear())
+            @Html.PersonalSEditorForFull(model => model.Position, Resources.Position)
+            @Html.PersonalTextAreaFor(model => model.Description, Resources.Description, 3)
+         
+        </fieldset>
+    <span class="btn-group">
+
+        <button type="submit" class="btn btn-primary"> Save </button>
+        
+    </span>
+        }
+</div>

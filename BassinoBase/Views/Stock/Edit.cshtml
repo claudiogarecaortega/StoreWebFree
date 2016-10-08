@@ -1,0 +1,45 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Domain.Almacen
+@using Domain.Products
+
+@model BassinoLibrary.ViewModels.StockViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Edit, "Stock"))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.HiddenFor(model => model.Id)
+@Html.PersonalTextAreaFor(model => model.Descripcion, "Descripcion", 3, true)
+@Html.PersonalSEditorFor(model => model.Cantidad)
+@(Html.ComboFor(model => model.ProductoId)
+              .TextField<Product>(codigoAtc => codigoAtc.Nombre)
+                      .ValueField<Product>(codigoAtc => codigoAtc.Id)
+              .Label()
+        // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.Productos)
+)
+@(Html.ComboFor(model => model.AlmacenId)
+              .TextField<Almacen>(codigoAtc => codigoAtc.Descripcion)
+                              .ValueField<Almacen>(codigoAtc => codigoAtc.Id)
+              .Label()
+        // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.Almacenes)
+)
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

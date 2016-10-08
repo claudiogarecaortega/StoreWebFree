@@ -1,0 +1,34 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@model BassinoLibrary.ViewModels.CuotasViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Edit, "Cuotas"))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.HiddenFor(model => model.Id)
+	@Html.HiddenFor(model => model.CreditoId)
+    @Html.PersonalDisplayFor(model => model.Credito)
+    @Html.PersonalDisplayFor(model => model.CreditoCliente)
+    @Html.PersonalDisplayFor(model => model.MontoTotal)
+    @Html.PersonalDisplayFor(model => model.MontoPendiente)
+    @Html.PersonalDisplayFor(model => model.Vencimiento)
+    @Html.PersonalSEditorFor(model => model.Valor)
+    @Html.PersonalTextAreaFor(model => model.Descripcion,"Observaciones del pago",3,true)
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

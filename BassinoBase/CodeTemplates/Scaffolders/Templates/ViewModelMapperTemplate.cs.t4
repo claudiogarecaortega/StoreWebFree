@@ -1,0 +1,56 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+<# if (Model.ModelNamespace != null) { #>
+using <#= Model.ModelNamespace #>;
+<# } #>
+<# if (Model.ViewModelNamespace != null) { #>
+using <#= Model.ViewModelNamespace #>;
+<# } #>
+using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
+using Domain.Products;
+using BassinoLibrary.ViewModels;
+using BassinoBase.Models.ViewModelMapper;
+using BassinoBase.Models.ViewModelMapper.Interface;
+using BassinoBase.Models.ViewModelMapper.Interfaces;
+using Domain.Misc;
+using Persistence;
+using Persistence.Dao.Interfaces;
+
+
+
+namespace <#= Model.Namespace #>
+{
+    public class <#= Model.Name #> : ViewModelMapper<<#= Model.ModelName #>, <#= Model.ViewModelName #>, <#= Model.ViewModelName #>>, I<#= Model.ModelName #>ViewModelMapper
+    {
+	 private IApplicationDbContext _dbContext;
+
+        public <#= Model.Name #>(IApplicationDbContext dbContext)
+        {
+            Mapper.CreateMap<<#= Model.ModelName #>, <#= Model.ViewModelName #>>()
+			//.ForMember(model => model.Categorias, opt => opt.Ignore())
+			;
+            Mapper.CreateMap<<#= Model.ViewModelName #>, <#= Model.ModelName #>>()
+			//.ForMember(model => model.Categorias, opt => opt.Ignore())
+			;
+        }
+		  public override <#= Model.ViewModelName #> Map(<#= Model.ModelName #> model)
+        {
+            var viewModel = base.Map(model);
+			return viewModel;
+        }
+
+        public override void Map(<#= Model.ViewModelName #> viewModel, <#= Model.ModelName #> model)
+        {
+            base.Map(viewModel, model);
+
+            //this.Set(hospital => model.UserContact = hospital, viewModel.ContactId, UserExtendedDao);
+        }
+
+        public override IEnumerable<<#= Model.ViewModelName #>> Map(IEnumerable<<#= Model.ModelName #>> models)
+        {
+            return models.Select(Map);
+        }
+    }
+}

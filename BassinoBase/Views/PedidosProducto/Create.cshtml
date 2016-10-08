@@ -1,0 +1,63 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Domain.Providers
+@using Kendo.Mvc.UI
+@model BassinoLibrary.ViewModels.PedidosProductoViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, "PedidosProducto"))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.PersonalTextAreaFor(model => model.Descripcion,"Descripcion del pedido",3,true)
+	@Html.PersonalSEditorFor(model => model.Referencia)
+    @(Html.DateTimePicker(model => model.FechaDePago)
+          .Label()
+          .SetID("TicketDateTime")
+          .ChangeMonth()
+          .ChangeYear())
+    @(Html.ComboFor(model => model.ProvedorId)
+              .TextField<Provider>(codigoAtc => codigoAtc.Name)
+                              .ValueField<Provider>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.Provedores)
+    )
+    @Html.Label("Productos")
+
+    @(Html.Kendo().MultiSelect()
+                                                                  .Name("Productos")
+                                  .DataTextField("name")
+                                  .DataValueField("id")
+                                 .Placeholder("Seleccione los Productos...")
+                                  .AutoBind(false)
+                                 
+                                                     .DataSource(source =>
+                                                                                    {
+                                                                                        source.Read(read =>
+                                                                                        {
+                                                                                            read.Action("GetProducts", "Product");
+                                                                                        })
+                                                                                            .ServerFiltering(true);
+                                                                                    })
+          )
+    @Html.PersonalSEditorFor(model => model.Precio)
+    @Html.PersonalSEditorFor(model => model.Adelantado)
+    @Html.CheckBoxPersonal(model => model.Pagado)
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

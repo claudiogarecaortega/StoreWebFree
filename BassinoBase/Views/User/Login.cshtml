@@ -1,0 +1,36 @@
+﻿@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Microsoft.Owin.Security
+@model BassinoBase.Models.LoginViewModel
+@{
+    Layout = "~/Views/Shared/_ModalLayoutLogin.cshtml";
+    ViewBag.Action = "Login";
+}
+@section Header{
+    <div id="areaNotificacionLogin" class="notifiaction-container">
+        <div id="mensajeNotificacionLogin" class="notification">
+
+        </div>
+    </div>
+    @Helpers.ModalHeaderLogin()
+}
+
+
+<fieldset>
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.PersonalSEditorForFull(model => model.Email, Resources.Email)
+    @Html.PersonalSEditorForFullPassword(model => model.Password, Resources.Password)
+
+
+    <div class="form-group">
+        <button id="btnSubmit" class="btn btn-primary btn-lg btn-block">@Resources.Login</button>
+      
+    </div>
+   
+</fieldset>
+
+
+@section Footer{
+   
+}

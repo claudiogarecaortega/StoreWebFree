@@ -1,0 +1,25 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.BancariaViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Delete, "Bancaria"))
+}
+
+<fieldset>
+
+	@Html.PersonalDisplayFor(model => model.Entidad)
+    @Html.PersonalDisplayFor(model => model.NumeroCuenta)
+    @Html.PersonalDisplayFor(model => model.Saldo)
+				
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesBorrarCancelar()
+}

@@ -1,0 +1,52 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.ViewModels
+<script>
+
+    $(document).ready(function() {
+        $("#Buscar").keyup(function(e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        updateTitle("Gestion de Cuotas Credito", "Gestion Contable");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+
+</script>
+
+@Helpers.Buscador()
+@Helpers.BotonesActionesCuotas(true, "Cuotas")
+@(Html.KendoGrid().Grid<CuotasViewModel, CuotasController>(GridDetailsMode.None)
+    .Name("GridCuotas")
+    .Columns(columns =>
+    {
+	columns.Template(@<text></text>).Width(50).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>");
+			columns.Bound(p => p.Credito);
+			columns.Bound(p => p.CreditoCliente);
+			columns.Bound(p => p.MontoTotal);
+			columns.Bound(p => p.MontoPendiente);
+			columns.Bound(p => p.Valor);
+	    }).ClientRowTemplate("<tr style='#= Status =='green' ? \"background-color: green ;\" : Status =='yellow' ? \"background-color: yellow ;\": Status =='red' ? \"background-color: red ;\":\"\" #' data-uid='#= uid #'>" +
+                                                       // "<td data-uid='#= uid #'><input type='checkbox' '#= Status =='green' ? \" disabled \" : Status =='yellow' ? \" disabled \":\"\" #'  name='viaje' class='chkbx' value='#= id #' id='_#= id #'/></td>" +
+                             "<td><input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/></td>" +
+                        "<td>#: Credito #</td>" +
+                                                "<td >#: CreditoCliente #</td>" +
+                                                "<td >#: MontoTotal #</td>" +
+                                                "<td >#: MontoPendiente #</td>" +
+                                                    "<td >#: Valor #</td>" +
+
+                                      "</tr>")
+	.DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(conf => conf.Id(model => model.Id))
+        .PageSize(10)
+        .Read(read => read.Action("GridInfo", "Cuotas").Data("additionalParameters"))
+    )
+)

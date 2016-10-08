@@ -1,0 +1,36 @@
+﻿<div class="modal-dialog" id="modal-dialog" style="width: 1200px; height: 800px">
+    <div class="modal-content" style="min-width: 1000px;height: 1000px">
+
+        <div id="headModal" class="modal-header">
+            @RenderSection("Header")
+        </div>
+
+        @if (ViewBag.ControllerName != null)
+        {
+            using (Ajax.BeginForm((string)ViewBag.Action, (string)ViewBag.ControllerName, null, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "modal", OnBegin = "block();", OnComplete = "unBlock();" },
+                new { @role = "form", @id = (string)ViewBag.FormId }))
+            {
+                <div id="bodyModal" class="modal-body">
+                    @RenderBody()
+                </div>
+                <div class="modal-footer">
+                    @RenderSection("Footer", false)
+                </div>
+            }
+        }
+        else
+        {
+            using (Ajax.BeginForm((string)ViewBag.Action, null, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "modal", OnBegin = "block();", OnComplete = "unBlock();" },
+                new { @role = "form", @id = "formId" }))
+            {
+                <div class="modal-body">
+                    @RenderBody()
+                </div>
+                <div class="modal-footer">
+                    @RenderSection("Footer", false)
+                </div>
+            }
+        }
+
+    </div>
+</div>

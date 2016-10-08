@@ -1,0 +1,154 @@
+﻿@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@model BassinoLibrary.ViewModels.ShipmentTrackViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Receive";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, Resources.ShipmentTrack))
+}
+<script>
+    function checkDate(multi) {
+        var dat = $("#StrDateTime").val();
+        var id = $("#ShipmentId").val();
+        $.ajax({
+            type: "POST",
+            url: "/ShipmentTrack/ValidDate",
+            datatype: "JSON",
+            data: { date: dat, id: id },
+            success: function (data) {
+
+                if (data=='False') {
+                    $("#message").text("la fecha no debe ser menor a la fecha de recepcion");
+                    $("#message").css("color", 'red');
+                    $("#botonGuardarId").css('display', 'none');
+                    $('#StrDateTime').css('border-color', 'red');
+                } else {
+                    $("#message").text("");
+                    $("#botonGuardarId").show();
+                    $('#StrDateTime').css('border-color', '');
+                }
+            }
+        });
+    }
+    function addValue(id) {
+        var velo = "";
+        $("input:checkbox[name='Cargas']").each(function(e) {
+            if($(this).is(":checked")) 
+                velo = velo + "-" + $(this).attr("id");
+         
+        });
+        $("#CargasRecibidas").val(velo);
+
+
+    }
+    //$(document).ready(function() {
+    //    //set initial state.
+    //    var velo = "";
+        
+    //    $("input:checkbox[name='Cargas']").change(function() {
+
+    //        $("input:checkbox[name='Cargas']").each(function(e) {
+    //            if($(this).is(":checked")) {
+    //                alert(e.target.id);
+    //                velo = velo + "-" + $(this).attr("id");
+    //            }
+         
+    //        });
+            
+    //        $("#CargasRecibidas").val(velo);       
+    //    });
+    //});
+    function checkDestination(multi) {
+        var id = $("#ShipmentId").val();
+        var idUbication = multi;
+        var mensaje = "";
+        $.ajax({
+            type: "POST",
+            url: "/ShipmentTrack/CheckDestination",
+            datatype: "JSON",
+            data: {  id: id ,idUbication:idUbication},
+            success: function (data) {
+                if (data.state) {
+                    if (data.cargaFinal) {
+                         mensaje = "  El paquete:  " + data.descriptionCarga + " Tiene Como destino:  " + data.descriptionUbication + " Al recibir el envio se tomara como recepcionado por favor corrobore que todo este correcto  !!!!Importante es el ultimo envio y se da por conluido el viaje";
+                        $("#CargaId").val(data.cargaId);
+                        $("#parrafo").text(mensaje);
+                        $("#notificacion").show();
+                      }
+                    else
+                    {
+                     mensaje = "  El paquete:  " + data.descriptionCarga + " Tiene Como destino:  " + data.descriptionUbication + "  no podra continuar el viaje hasta que el mismo sea descagado  Al recibir el envio se tomara como recepcionado por favor corrobore que todo este correcto  ";
+                    $("#CargaId").val(data.cargaId);
+                    $("#parrafo").text(mensaje);
+                    $("#notificacion").show();
+                   
+                    }
+                   
+                }
+
+            }
+        });
+    }
+</script>
+<fieldset>
+    <div class="alert alert-warning alert-dismissable" id="notificacion" style="display:none">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+        <p id="parrafo"></p>
+    </div>
+    @if (ViewBag.mesage != null)
+    {
+        <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+            @ViewBag.mesage
+        </div>
+    }
+    else
+    {
+        @Html.ValidationSummary(true)
+        <input type="hidden" id="ShipmentId" name="ShipmentId" value="@ViewBag.shipId">
+    <input type="hidden" id="CargasRecibidas" name="CargasRecibidas" value="">
+    <input type="hidden" id="CargaId" name="CargaId" value="@ViewBag.shipId">
+        @(Html.DateTimePicker(model => model.DateTrack)
+              .Label()
+              .SetID("StrDateTimeReceive")
+              .ChangeMonth()
+              //.SetFunctionn("checkDate")
+              .ChangeYear())
+        <label id="message"></label>
+        @(Html.AutocompleteFor<ShipmentTrackViewModel, int?>(model => model.Ubication)
+              .TextField<UbicationViewModel>(diag => diag.DescriptionCompleta)
+              .ValueField<UbicationViewModel>(diag => diag.Id)
+              .Id(model => model.UbicationId)
+              .Source("GetAutoComplete", "Ubication"))
+        @Html.PersonalTextAreaFor(model => model.Observaciones, "", 6)
+    <br>
+        @Html.Label("Seleccione las Cargas recibidas en este destino")
+    <br>
+        foreach (var item in ViewBag.Cargas)
+        {
+            <br>
+            <input data-val="true" data-on-text="Si" data-off-text="No" name="Cargas" data-on-color="success" data-off-color="danger" type="checkbox" onclick="addValue(@item.Id)" id="@item.Id"> @item.Description
+        <br>
+        }
+
+    }
+</fieldset>
+
+@section Footer
+{@if (ViewBag.mesage == null)
+{
+    @Helpers.BotonesGuardarCancelarModal();
+}
+else
+{
+    @Helpers.BotonClose();
+}
+}

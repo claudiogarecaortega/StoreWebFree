@@ -1,0 +1,34 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@model BassinoLibrary.ViewModels.ModuleViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, Resources.Module))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.PersonalSEditorFor(model => model.Name)
+	@Html.PersonalSEditorFor(model => model.ModuleName)
+    @(Html.AutocompleteFor<ModuleViewModel, int?>(model => model.ModuleParent)
+          .TextField<ModuleViewModel>(diag => diag.ModuleName)
+                  .ValueField<ModuleViewModel>(diag => diag.Id)
+          .Id(model => model.ModuleParentId)
+          .Source("GetAutoComplete", "Module"))
+
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

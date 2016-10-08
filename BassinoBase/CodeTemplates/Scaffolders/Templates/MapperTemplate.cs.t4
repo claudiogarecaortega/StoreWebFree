@@ -1,0 +1,19 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+using System.Data.Entity.ModelConfiguration;
+using <#= Model.ModelNamespace #>;
+<# var modelNameLower = Model.ModelName.ToLower(); #>
+
+namespace <#= Model.Namespace #>
+{ 
+    public class <#= Model.Name #> : EntityTypeConfiguration<<#= Model.ModelName #>>
+    {
+		public <#= Model.Name #>()
+        {
+            this.ToTable("<#= Model.ModelName #>s");
+            this.HasKey(<#= modelNameLower #> => <#= modelNameLower #>.Id);
+
+            this.Property(<#= modelNameLower #> => <#= modelNameLower #>.Id).IsRequired();
+        }
+	}
+}

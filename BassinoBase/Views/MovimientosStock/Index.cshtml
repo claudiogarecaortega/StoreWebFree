@@ -1,0 +1,66 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+
+@using BassinoLibrary.ViewModels
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@using BassinoLibrary.ViewModels
+
+<script>
+
+    $(document).ready(function () {
+        $(".select2").select2();
+        $("#filterText").keyup(function (e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        $('#reservation').daterangepicker();
+        updateTitle("Movimiento de Stock", "Gestion General");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function () {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+    function additionalParametersPrdoctos() {
+        return {
+            cuenta: $("#cuentaBox").val(),
+            fechas: $("#reservation").val(),
+            infecha: $("#rango").prop('checked')
+           
+
+            // EmpresaID: $("#EmpresaID").val()
+        };
+    }
+    function buscar() {     
+        RefrescarGrilla();
+    }
+    function limpiar() {
+        $('#rango').attr('checked', false);
+        $("#cuentaBox").val(0);
+        $("#reservation").val("");
+        RefrescarGrilla();
+    }
+</script>
+@Helpers.BuscadorProductos(ViewBag.ListaItems)
+@Helpers.BotonesActionesMovimientosStock(false, false, false, true, "MovimientosStock")
+@(Html.KendoGrid().Grid<MovimientosStockViewModel, MovimientosStockController>(GridDetailsMode.None)
+    .Name("GridMovimientosStock")
+    .Columns(columns =>
+    {
+	columns.Template(@<text></text>).Width(50).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>");
+			columns.Bound(p => p.Descripcion);
+			columns.Bound(p => p.StockProducto);
+			columns.Bound(p => p.Stock);
+	    })
+	.EditarBorrar(true,true)
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(conf => conf.Id(model => model.Id))
+        .PageSize(10)
+                .Read(read => read.Action("GridInfoShipProduccion", "MovimientosStock").Data("additionalParametersPrdoctos"))
+    )
+)

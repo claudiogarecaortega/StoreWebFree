@@ -1,0 +1,176 @@
+@using BassinoBase.Models
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Domain.Clients
+@using Domain.Misc
+@using Domain.Products
+@using Domain.Users
+
+@model BassinoLibrary.ViewModels.InboundViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, Resources.Inbound))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+    @(Html.DateTimePicker(model => model.DateIn)
+          .Label()
+          .SetID("StrDateTime")
+          .ChangeMonth()
+          .ChangeYear())
+    @(Html.DateTimePicker(model => model.DateTicket)
+          .Label()
+          .SetID("TicketDateTime")
+          .ChangeMonth()
+          .ChangeYear())
+    @(Html.ComboFor(model => model.ClientOrigenId)
+              .TextField<Client>(codigoAtc => codigoAtc.Alias)
+                      .ValueField<Client>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                                      .Values(ViewBag.ClientsOrigen)
+          )
+
+    @(Html.ComboFor(model => model.BillId)
+              .TextField<Bill>(codigoAtc => codigoAtc.Description)
+                      .ValueField<Bill>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.Bills)
+          )
+    @(Html.ComboFor(model => model.BillTypeId)
+              .TextField<BillType>(codigoAtc => codigoAtc.Description)
+                      .ValueField<BillType>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.BillsType)
+    )
+    @Html.PersonalSEditorFor(model => model.BillNumber)
+  
+    
+    @Html.PersonalSEditorFor(model => model.PriceDecimal)
+    @(Html.ComboFor(model => model.ProductId)
+              .TextField<Product>(codigoAtc => codigoAtc.Description)
+                      .ValueField<Product>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.Products)
+    )
+
+    @Html.PersonalTextAreaFor(model => model.Description,"",6,true)
+    @(Html.ComboFor(model => model.PackageTypeId)
+              .TextField<PackageType>(codigoAtc => codigoAtc.Description)
+                      .ValueField<PackageType>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.Package)
+    )
+
+
+
+
+    @Html.PersonalSEditorFor(model => model.Quantity)
+    @Html.PersonalSEditorFor(model => model.Kilos)
+    @Html.PersonalSEditorFor(model => model.UsoFisico)
+    @Html.LabelFor(model => model.IsCold)
+    <div class="form-group">
+        <input data-val="true" data-on-text="Si" data-off-text="No" id="IsCold" name="IsCold" data-on-color="success" data-label-text="Frio" data-off-color="danger" type="checkbox" value="true">
+    </div>
+    
+    @(Html.ComboFor(model => model.UserControlId)
+                      .TextField<UserExtendedViewModel>(codigoAtc => codigoAtc.FullName)
+                      .ValueField<UserExtendedViewModel>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.Users)
+          )
+    @(Html.ComboFor(model => model.ClientToId)
+              .TextField<Client>(codigoAtc => codigoAtc.Alias)
+                      .ValueField<Client>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+              .Values(ViewBag.ClientsDestino)
+          )
+    @{
+        if (ViewBag.Add)
+        {
+            @(Html.ComboFor(model => model.ClientFromId)
+                  .TextField<Client>(codigoAtc => codigoAtc.Alias)
+                  .ValueField<Client>(codigoAtc => codigoAtc.Id)
+                  .Label()
+                  // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+                  .ValidationMessage()
+                  .Values(ViewBag.Clients)
+                  )
+        }
+        
+    }
+   
+   
+</fieldset>
+<script>
+    $(document).ready(function () {
+        $("input[type=\"checkbox\"]").bootstrapSwitch();
+        $("#BillNumber").mask("0000-00000000");
+        //$("#UsoFisico").inputmask({ 'mask': "9{0,5}.9{0,2}", greedy: false });
+        //  $("#IsCold").bootstrapSwitch('toggleReadonly', true);
+        setDate();
+    });
+    function setDate() {
+        var d = new Date();
+
+        var month = d.getMonth() + 1;
+        var day = d.getDate();
+
+        var output = 
+            (('' + month).length < 2 ? '0' : '') + month + '/' +
+            (('' + day).length < 2 ? '0' : '') + day + '/' + d.getFullYear();
+
+        $("#StrDateTime").val(output);
+        $("#StrDateTime").attr('disabled', true);
+
+    }
+    $("#ProductId").change(function () {
+        // Pure JS
+        var selectedVal = this.value;
+        $.ajax({
+            type: "POST",
+            url: "/Product/GetProductCold",
+            datatype: "JSON",
+            data: { text: selectedVal },
+            success: function (data) {
+              debugger
+                if (data.cold==true) {
+                  //  $("#IsCold").bootstrapSwitch('toggleReadonly', false);
+                    $("#IsCold").bootstrapSwitch('state', true);
+                    //$("#IsCold").bootstrapSwitch('toggleReadonly', true);
+                    
+                } else {
+                    //$("#IsCold").bootstrapSwitch('toggleReadonly', false);
+                    $("#IsCold").bootstrapSwitch('state', false);
+                   // $("#IsCold").bootstrapSwitch('toggleReadonly', true);
+                }
+            }
+        });
+    });
+</script>
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

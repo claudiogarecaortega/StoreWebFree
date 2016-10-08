@@ -1,0 +1,24 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.StockViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "Stock", Model.Id, string.Format("{0} {1}", Resources.Details, "Stock"))
+}
+
+
+<fieldset>
+
+	@Html.PersonalDisplayFor(model => model.Descripcion)
+	@Html.PersonalDisplayFor(model => model.Almacen)
+	@Html.PersonalDisplayFor(model => model.Producto)
+	@Html.PersonalDisplayFor(model => model.Cantidad)
+
+</fieldset>
+
+

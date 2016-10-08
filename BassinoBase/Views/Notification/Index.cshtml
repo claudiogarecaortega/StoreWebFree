@@ -1,0 +1,49 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+
+@using BassinoLibrary.ViewModels
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@using BassinoLibrary.ViewModels
+
+<script>
+
+    $(document).ready(function() {
+        $("#Buscar").keyup(function(e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        $('#modal').on('hidden.bs.modal', function () {
+            // do something…
+        RefrescarGrilla();
+        })
+        updateTitle("Notificaciones", "Configuraciones");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+
+</script>
+@Helpers.BotonesActionesNotification()
+@(Html.KendoGrid().Grid<NotificationViewModel, NotificationController>(GridDetailsMode.None)
+      .Name("GridNotification")
+      .Columns(columns =>
+      {
+          columns.Template(@<text></text>).Width(50).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>");
+          columns.Bound(p => p.Id);
+          columns.Bound(p => p.Messages);
+			
+      })
+
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Model(conf => conf.Id(model => model.Id))
+          .PageSize(25)
+          .Read(read => read.Action("GridInfo", "Notification"))
+      ))

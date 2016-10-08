@@ -1,0 +1,23 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.PackageTypeViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "PackageTypeViewModel", Model.Id, string.Format("{0} {1}", Resources.Details, Resources.PackageType))
+}
+
+
+<fieldset>
+
+	@Html.HiddenFor(model => model.Id)
+
+	@Html.PersonalDisplayFor(model => model.Description)
+
+</fieldset>
+
+

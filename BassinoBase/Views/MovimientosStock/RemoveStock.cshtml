@@ -1,0 +1,37 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Domain.Providers
+@model BassinoLibrary.ViewModels.MovimientosStockViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "RemoveStock";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, "MovimientosStock"))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+    @Html.HiddenFor(model=>model.StockId)
+    @Html.PersonalDisplayFor(model=>model.Stock)
+    @Html.PersonalDisplayFor(model=>model.StockProducto)
+	@Html.PersonalTextAreaFor(model => model.Descripcion,"Description",3,true)
+    @Html.PersonalSEditorFor(model=>model.Cantidad)
+    @(Html.ComboFor(model => model.ProveedorId)
+              .TextField<Provider>(codigoAtc => codigoAtc.Name)
+                              .ValueField<Provider>(codigoAtc => codigoAtc.Id)
+              .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+              .ValidationMessage()
+                              .Values(ViewBag.Provedores)
+    )
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

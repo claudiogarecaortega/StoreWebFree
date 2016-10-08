@@ -1,0 +1,78 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@using Domain.Misc
+@using Domain.Users
+@using Kendo.Mvc.UI
+
+@model BassinoLibrary.ViewModels.ClientViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, "Cuenta"))
+}
+
+<fieldset>
+
+    @Html.ValidationSummary(true)
+
+    @Html.PersonalSEditorFor(model => model.Name)
+    @Html.PersonalSEditorFor(model => model.Alias)
+    @Html.PersonalSEditorFor(model => model.Direction)
+    @Html.PersonalSEditorFor(model => model.NameContact)
+    @Html.PersonalSEditorFor(model => model.PhoneContact)
+    @Html.PersonalSEditorFor(model => model.MailContact)
+    @Html.PersonalSEditorFor(model => model.DocumentoIdentidad)
+   
+    @Html.PersonalTextAreaFor(model => model.Description, "", 6, true)
+    <input type="hidden" name="ZipCode" value="00000">
+    <input type="hidden" name="ServicePrice" value="00000">
+    <input type="hidden" name="MeasureUnit" value="00000">
+    <input type="hidden" name="SellerId" value="0">
+    @(Html.AutocompleteFor<ClientViewModel, int?>(model => model.Ubication)
+        .TextField<UbicationViewModel>(diag => diag.DescriptionCompleta)
+        .ValueField<UbicationViewModel>(diag => diag.Id)
+        .Id(model => model.UbicationId)
+        .Source("GetAutoComplete", "Ubication"))
+    <input type="hidden" name="DeliveryDirection" value="none">
+    <input type="hidden" name="Neighborhood" value="none">
+    <input type="hidden" name="Localidad" value="none">
+    <input type="hidden" name="TimeToDelivery" value="none">
+    <input type="hidden" name="Contact" value="none">
+
+
+
+
+
+
+</fieldset>
+<script>
+    $(document).ready(function () {
+       // $("#Cuit").mask("99-99999999-9");
+       
+        //$("#Cuit").blur(function () {
+          
+        //    var cui = $("#Cuit").val();
+        //    var cuit = cui.replace('-', '').replace('-', '');
+        //    if (!validaCuit(cuit)) {
+        //        $("#Cuit").css('border-color', 'red');
+        //        $("#CuitError").css('color', 'red');
+        //        $("#CuitError").text("el cuit es incorrecto");
+
+        //    }else{
+        //        $("#Cuit").css('border-color', '');
+        //        $("#CuitError").css('color', '');
+        //        $("#CuitError").text("");
+        //            }
+        //});
+    });
+</script>
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

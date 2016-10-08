@@ -1,0 +1,212 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@using Kendo.Mvc.UI
+@model BassinoLibrary.ViewModels.CreditoViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, "Credito"))
+}
+
+<fieldset>
+    <div class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h4><i class="icon fa fa-warning"></i> Alerta</h4>
+        Al crear un credito se generara un plan de pagos, si se abonara todo debera realizar una compra en modulo de compras
+    </div>
+    @Html.ValidationSummary(true)
+    <input type="hidden" id="ProductsIds" name="ProductsIds" value=>
+    <input type="hidden" id="UserId" name="UserId" value="@ViewBag.CreateUser">
+    @Html.Label("Productos")
+
+    @(Html.Kendo().MultiSelect()
+                                                          .Name("ProductosId")
+                                  .DataTextField("name")
+                                  .DataValueField("id")
+                                 .Placeholder("Seleccione los Productos...")
+                                  .AutoBind(false)
+                                  .Events(x => x.Select(@<text>
+                                    function(e) {
+
+                                    }
+                                </text>))
+                                  .Events(x => x.Change(@<text>
+        function (e) {
+    var previous = this._savedOld;
+    // These are current values.
+    var current = this.value();
+    // Let's save it for the next time
+    saveCurrent(this);
+
+    // The difference between previous and current are removed elements
+    var diff = $(previous).not(current).get();
+    if(diff.length>0){
+
+
+    //var vector=$("#UbicationsId").val();
+    // vector=vector +","+diff[0];
+    var i=','+diff[0];
+    onSelectRemove(diff[0]);
+   // vector=vector.replace(i,'')
+    //$("#UbicationsId").val(vector);
+    //readRoute(vector);
+
+    }
+
+    // The difference between current and previous, are added elements
+    diff = $(current).not(previous).get();
+    console.log("added", diff);
+    
+        }
+                                </text>)).Events(x => x.Select(@<text>
+                                                                   function (e) {
+                                                                      
+    
+    onSelect(this.dataSource.view()[e.item.index()].id);
+        }
+                                </text>))
+                                             .DataSource(source =>
+                                                                            {
+                                                                                source.Read(read =>
+                                                                                {
+                                                                                    read.Action("GetProducts", "Product");
+                                                                                })
+                                                                                    .ServerFiltering(true);
+                                                                            })
+)
+   
+    @(Html.AutocompleteFor<CreditoViewModel, int?>(model => model.Cliente)
+          .TextField<ClientViewModel>(diag => diag.NombreCompleto)
+          .ValueField<ClientViewModel>(diag => diag.Id)
+          .Id(model => model.ClienteId)
+          .Source("GetAutoComplete", "Client"))
+    @Html.PersonalTextAreaFor(model => model.Descripcion, "Descripcion del Credito", 3, true)
+    @Html.PersonalSEditorFor(model => model.Monto)
+    @Html.PersonalSEditorFor(model => model.MontoTotal)
+    @Html.PersonalSEditorFor(model => model.Interes)
+    @Html.PersonalSEditorFor(model => model.NumeroPagos)
+
+
+    <input class="btn btn-primary" type="button" onclick="SimulateCoutas()" value="Simular"/>
+    <table id="tablaSimulada" style=" margin-top: 20px">
+        <thead >
+        <tr>
+            <th>
+                Monto
+            </th>
+            <th>
+                Vencimmiento
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+
+    </table>
+
+</fieldset>
+<style>
+    table {
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid black;
+    width: 50%;
+     
+}
+</style>
+<script>
+    function saveCurrent(multi) {
+        multi._savedOld = multi.value().slice(0);
+    }
+    function onSelect(e) {
+        
+        var ids = $("#ProductsIds").val();
+        ids = ids + "-" + e;
+        $("#ProductsIds").val(ids);
+        ProductSelectSum();
+    }
+    function onSelectRemove(e) {
+
+        e = "-" + e;
+        var ids = $("#ProductsIds").val();
+        ids = ids.replace(e, '');
+        $("#ProductsIds").val(ids);
+        ProductSelectSum();
+    }
+
+    function SimulateCoutas() {
+        var cadena = "";
+        var cantidad = $("#NumeroPagos").val();
+        var interes = $("#Interes").val();
+        var monto = $("#Monto").val();
+        $.ajax({
+            type: "POST",
+            url: "/Credito/SimularCuotas",
+            datatype: "JSON",
+            data: { cantidad: cantidad, interes: interes, monto: monto },
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    cadena = cadena + "<tr><td>" + item.cuota + "</td><td>" + item.fecha + "</td></tr>";
+                });
+                $('#tablaSimulada tbody').html(cadena);
+            }
+        });
+    }
+   
+    function ProductSelect() {
+        var monto = $("#ProductoId").val();
+        $.ajax({
+            type: "POST",
+            url: "/Product/GetDataPrduct",
+            datatype: "JSON",
+            data: { text: monto },
+            success: function (data) {
+                $("#Monto").val(data.monto);
+                $("#MontoTotal").val(data.monto);
+                $("#Monto").text(data.monto);
+                $("#MontoTotal").text(data.monto);
+                $("#Interes").val(0, 0);
+                $("#Monto").prop("readonly", true);
+                //$("#Monto").style.color = "#c0c0c0"; 
+                $("#MontoTotal").prop("readonly", true);
+                //$("#MontoTotal").style.color = "#c0c0c0";
+
+               
+
+            }
+        });
+    }
+    function ProductSelectSum() {
+        var monto = $("#ProductsIds").val();
+        $.ajax({
+            type: "POST",
+            url: "/Product/GetDataPrducts",
+            datatype: "JSON",
+            data: { text: monto },
+            success: function (data) {
+                $("#Monto").val(data.monto);
+                $("#MontoTotal").val(data.monto);
+                $("#Interes").val(0, 0);
+                $("#Monto").prop("readonly", true);
+                //$("#Monto").style.color = "#c0c0c0";
+                $("#MontoTotal").prop("readonly", true);
+                //$("#MontoTotal").style.color = "#c0c0c0";
+                $("#Interes").prop('disabled', true);
+
+            }
+        });
+    }
+</script>
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

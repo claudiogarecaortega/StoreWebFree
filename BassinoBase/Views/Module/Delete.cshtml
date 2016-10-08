@@ -1,0 +1,28 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+
+@model BassinoLibrary.ViewModels.ModuleViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Delete, Resources.Module))
+}
+
+<fieldset>
+
+	@Html.HiddenFor(model => model.Id)
+    @Html.PersonalDisplayFor(model => model.Name)
+    @Html.PersonalDisplayFor(model => model.ModuleName)
+    @Html.PersonalDisplayFor(model => model.ModuleParent)
+				
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesBorrarCancelar()
+}

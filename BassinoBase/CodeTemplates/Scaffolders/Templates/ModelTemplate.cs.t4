@@ -1,0 +1,10 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+namespace <#= Model.Namespace #>
+{ 
+    public class <#= Model.Name #> : GeneralObject
+    {
+		public virtual int Id { get; set; }
+		public string Descripcion { get; set; }
+	}
+}

@@ -1,0 +1,12 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+<# if (Model.ModelNamespace != null) { #>
+using <#= Model.ModelNamespace #>;
+<# } #>
+
+namespace <#= Model.Namespace #>
+{ 
+    public interface <#= Model.Name #> : IDao<<#= Model.ModelName #>>
+    {
+	}
+}

@@ -1,0 +1,48 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+
+@using BassinoLibrary.ViewModels
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@using BassinoLibrary.ViewModels
+
+
+@Helpers.BotonCreateUrl("modelName/Create", "Crear Nuevo modelName",true)
+
+<script>
+
+    $(document).ready(function() {
+        $("#Buscar").keyup(function(e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        var message = "@ViewBag.Title <small>Panel de Control</small>";
+        $("#titleUpdate").text("");
+        $("#titleUpdate").append(message);
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+
+</script>
+
+@(Html.KendoGrid().Grid<ImagenesViewModel, ImagenesController>()
+    .Name("GridImagenes")
+    .Columns(columns =>
+    {
+			columns.Bound(p => p.Description);
+	    })
+	.EditarBorrar(true,true)
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(conf => conf.Id(model => model.Id))
+        .PageSize(10)
+        .Read(read => read.Action("GridInfo", "Imagenes"))
+    )
+)

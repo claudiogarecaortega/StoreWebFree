@@ -1,0 +1,35 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+@using Interfaz.Controllers
+
+@using BassinoLibrary.ViewModels
+
+@{
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+@section Buscador
+{
+    @Helpers.Buscador()
+}
+
+@section Actions
+{
+	@Html.BotonAperturaModalCreate("Create", typeof(InboundtrackingController), "modal", null)
+}
+
+@(Html.KendoGrid().Grid<InboundtrackingViewModel, InboundtrackingController>()
+    .Name("GridInboundtracking")
+    .Columns(columns =>
+    {
+			columns.Bound(p => p.Id);
+			columns.Bound(p => p.Description);
+	    })
+	.EditarBorrar(true,true)
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(conf => conf.Id(model => model.Id))
+        .PageSize(10)
+        .Read(read => read.Action("GridInfo", "Inboundtracking"))
+    )
+)

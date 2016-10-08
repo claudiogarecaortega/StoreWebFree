@@ -1,0 +1,80 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Interfaz.Controllers
+@using BassinoLibrary.ViewModels
+@using Microsoft.Ajax.Utilities
+<script>
+
+    $(document).ready(function() {
+        // $("input[type=\"checkbox\"]").bootstrapSwitch();
+        $(".select2").select2();
+        $('#reservation').daterangepicker();
+        updateTitle("Facturacion", "Gestion Comercial");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+    function buscar() {
+        RefrescarGrilla();
+    }
+    function limpiar() {
+        $("#filterText").val("");
+        RefrescarGrilla();
+    }
+    function additionalParametersCargas() {
+        return {
+            cuenta: $("#cuentaBox").val(),
+            fechas: $("#reservation").val(),
+            infecha: $("#rango").prop('checked')
+           
+
+            // EmpresaID: $("#EmpresaID").val()
+        };
+    }
+    function buscar() {
+        RefrescarGrilla();
+    }
+    function limpiar() {
+       $('#rango').attr('checked', false);
+        $("#cuentaBox").val(0);
+        $("#reservation").val("");
+        RefrescarGrilla();
+    }
+</script>
+@Helpers.BuscadorFactura(ViewBag.ListaItems)
+@*Helpers.BotonesActionesShipment(false, ViewBag.editar, ViewBag.borrar, true, true, true, "Shipment",true,true,true)*@
+@(Html.KendoGrid().Grid<ShipmentViewModel, ShipmentController>(GridDetailsMode.None)
+    .Name("GridShipment")
+    .Columns(columns =>
+    {
+        columns.Template(@<text></text>).Width(70).ClientTemplate("<input type='checkbox' onClick='disableOnCheckeyo tamd(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>").Title("Acciones");
+        
+        columns.Bound(p => p.Id).Template(@<text></text>).Title("N° de Viaje").Width(100);
+        columns.Bound(p => p.UbicationTo);
+        columns.Bound(p => p.Observations);
+        //      columns.Template(@<text></text>).HtmlAttributes(new {}).Width(150).ClientTemplate(@Html.Partial("_GridAcctions").ToString());
+        @*columns.Template(@<text></text>).HtmlAttributes(new { @class = "acciones" }).Width(300).ClientTemplate(@Html.Partial("_GrisIcons").ToString())
+              .HtmlAttributes(new { @style = "overflow: visible;" });*@
+   
+    }).ClientRowTemplate("<tr style='#= Statuts =='green' ? \"background-color: green ;\" : Statuts =='yellow' ? \"background-color: yellow ;\":\"\" #' data-uid='#= uid #'>" +
+                                                            "<td><input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/></td>" +
+        "<td>#: Id #</td>"+
+                                        "<td >#: UbicationTo #</td>" +
+                                        "<td >#: Observations #</td>" +
+                                  //"<td  class='acciones' style='overflow: visible;'>" + @Html.Partial("_GrisIcons").ToString() + "</td>" +
+                              "</tr>")
+//.EditarBorrarEnviar(true,true,true,true)
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        
+        .Model(conf => conf.Id(model => model.Id))
+        .PageSize(10)
+                    .Read(read => read.Action("GridInfoShipFacturacion", "Shipment").Data("additionalParametersCargas"))
+    )
+      )
+

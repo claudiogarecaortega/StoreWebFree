@@ -1,0 +1,79 @@
+﻿@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@model BassinoLibrary.ViewModels.ShipmentTrackViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Send";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, Resources.ShipmentTrack))
+}
+<script>
+    function checkDate(multi) {
+        var dat = $("#StrDateTime").val();
+        var id= $("#ShipmentId").val();
+        $.ajax({
+            type: "POST",
+            url: "/ShipmentTrack/ValidDate",
+            datatype: "JSON",
+            data: { date: dat,id:id },
+            success: function (data) {
+                if (!data) {
+                    $("#message").val("la fecha no debe ser menor a la fecha de resepcion");
+                    $("#message").css("color", 'red');
+                    $("#btn btn-primary").prop('readonly', true);
+                    $('#TextBoxID').css('border-color', 'red');
+                } else {
+                    $("#message").val("");
+                    $("#btn btn-primary").prop('readonly', false);
+                    $('#TextBoxID').css('border-color', '');
+                }
+            }
+        });
+    }
+</script>
+<fieldset>
+@if (ViewBag.mesage != null)
+{
+    <div class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+        @ViewBag.mesage
+    </div>
+}
+else
+{
+    @Html.ValidationSummary(true)
+    <input type="hidden" name="ShipmentId" id="ShipmentId" value="@ViewBag.shipId">
+    @(Html.DateTimePicker(model => model.DateTrack)
+          .Label()
+          .SetID("StrDateTime")
+          .ChangeMonth()
+          .ChangeYear()
+         // .SetFunctionn("checkDate")
+          )
+    <label id="message"></label>
+    @(Html.AutocompleteFor<ShipmentTrackViewModel, int?>(model => model.Ubication)
+          .TextField<UbicationViewModel>(diag => diag.DescriptionCompleta)
+          .ValueField<UbicationViewModel>(diag => diag.Id)
+          .Id(model => model.UbicationId)
+          .Source("GetAutoComplete", "Ubication"))
+    @Html.PersonalTextAreaFor(model => model.Observaciones, "", 6)
+}
+</fieldset>
+
+@section Footer
+{
+   @if (ViewBag.mesage == null)
+   {
+    @Helpers.BotonesGuardarCancelarModal();
+   }
+   else
+   {
+       @Helpers.BotonClose();
+   }
+}

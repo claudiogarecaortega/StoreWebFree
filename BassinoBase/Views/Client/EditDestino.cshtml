@@ -1,0 +1,117 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@using Domain.Misc
+@using Domain.Users
+
+
+@model BassinoLibrary.ViewModels.ClientViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Edit,  ViewBag.title))
+}
+
+<fieldset>
+
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Id)
+    @Html.PersonalSEditorFor(model => model.Name)
+    @Html.PersonalSEditorFor(model => model.Alias)
+    @Html.PersonalSEditorFor(model => model.DeliveryDirection)
+    @Html.PersonalSEditorFor(model => model.Localidad)
+    @Html.PersonalSEditorFor(model => model.Neighborhood)
+    <table>
+        <tr>
+            <td style="padding-right: 10px;">@Html.LabelFor(model => model.TimeToDeliveryMorningStart) </td>
+            <td style="padding-right: 10px;">@Html.PersonalSEditorNoGroupFor(model => model.TimeToDeliveryMorningStart)</td>
+
+            <td style="padding-right: 10px;">@Html.LabelFor(model => model.TimeToDeliveryMorningEnd) </td>
+            <td style="padding-right: 10px;">@Html.PersonalSEditorNoGroupFor(model => model.TimeToDeliveryMorningEnd)</td>
+        </tr>
+        <tr>
+            <td style="padding-right: 10px;">@Html.LabelFor(model => model.TimeToDeliveryAftermonStart) </td>
+            <td style="padding-right: 10px;">@Html.PersonalSEditorNoGroupFor(model => model.TimeToDeliveryAftermonStart)</td>
+            <td style="padding-right: 10px;">@Html.LabelFor(model => model.TimeToDeliveryAftermonEnd) </td>
+            <td style="padding-right: 10px;">@Html.PersonalSEditorNoGroupFor(model => model.TimeToDeliveryAftermonEnd)</td>
+        </tr>
+    </table>
+    @Html.PersonalSEditorFor(model => model.ZipCode)
+    @(Html.ComboFor(model => model.UbicationId)
+          .TextField<UbicationViewModel>(codigoAtc => codigoAtc.DescriptionCompleta)
+          .ValueField<UbicationViewModel>(codigoAtc => codigoAtc.Id)
+          .Label()
+            // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+          .ValidationMessage()
+          .Values(ViewBag.Ubications)
+    )
+    @*@(Html.AutocompleteFor<ClientViewModel, int?>(model => model.Ubication)
+          .TextField<UbicationViewModel>(diag => diag.DescriptionCompleta)
+          .ValueField<UbicationViewModel>(diag => diag.Id)
+          .Id(model => model.UbicationId)
+          .Source("GetAutoComplete", "Ubication"))*@
+    @Html.PersonalSEditorFor(model => model.Sequence)
+    @(Html.ComboFor(model => model.TaxConditionId)
+          .TextField<TaxCondition>(codigoAtc => codigoAtc.Description)
+          .ValueField<TaxCondition>(codigoAtc => codigoAtc.Id)
+          .Label()
+          // .SelectedValue(Convert.ToInt32(Model.MeasureUnitId??0))
+          .ValidationMessage()
+          .Values(ViewBag.Providers)
+          )
+    @Html.PersonalSEditorFor(model => model.Cuit)
+    <label id="CuitError"></label>
+    @Html.PersonalSEditorFor(model => model.IiBb)
+    @Html.PersonalSEditorFor(model => model.NameContact)
+    @Html.PersonalSEditorFor(model => model.PhoneContact)
+    @Html.PersonalSEditorFor(model => model.MailContact)
+    @Html.PersonalSEditorFor(model => model.NameContact2)
+    @Html.PersonalSEditorFor(model => model.PhoneContact2)
+    @Html.PersonalSEditorFor(model => model.MailContact2)
+    @Html.PersonalTextAreaFor(model => model.Description, "", 6, true)
+    <input type="hidden" name="Direction" value="00000">
+    
+    <input type="hidden" name="SellerId" value="0">
+    <input type="hidden" name="MeasureUnit" value="0">
+    <input type="hidden" name="Sequence" value="0">
+    <input type="hidden" name="TimeToDelivery" value="00000">
+    <input type="hidden" name="ServicePrice" value="0">
+    <input type="hidden" name="Serviceses" value="0">
+    <input type="hidden" name="Contact" value="none">
+
+</fieldset>
+<script>
+    $(document).ready(function () {
+        $("#Cuit").mask("99-99999999-9");
+        $("#TimeToDeliveryMorningStart").mask("99:99");
+        $("#TimeToDeliveryMorningEnd").mask("99:99");
+        $("#TimeToDeliveryAftermonStart").mask("99:99");
+        $("#TimeToDeliveryAftermonEnd").mask("99:99");
+        $("#Cuit").blur(function () {
+
+            var cui = $("#Cuit").val();
+            var cuit = cui.replace('-', '').replace('-', '');
+            if (!validaCuit(cuit)) {
+                $("#Cuit").css('border-color', 'red');
+                $("#CuitError").css('color', 'red');
+                $("#CuitError").text("el cuit es incorrecto");
+
+            }else{
+                $("#Cuit").css('border-color', '');
+                $("#CuitError").css('color', '');
+                $("#CuitError").text("");
+                    }
+        });
+    });
+</script>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

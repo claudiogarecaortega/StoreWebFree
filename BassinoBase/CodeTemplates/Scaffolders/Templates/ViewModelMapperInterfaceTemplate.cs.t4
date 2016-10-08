@@ -1,0 +1,16 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+<# if (Model.ModelNamespace != null) { #>
+using <#= Model.ModelNamespace #>;
+<# } #>
+<# if (Model.ViewModelNamespace != null) { #>
+using <#= Model.ViewModelNamespace #>;
+
+<# } #>
+using BassinoBase.Models.ViewModelMapper.Interface;
+namespace <#= Model.Namespace #>
+{
+    public interface <#= Model.Name #> : IViewModelMapper<<#= Model.ModelName #>, <#= Model.ViewModelName #>, <#= Model.ViewModelName #>>
+    {
+    }
+}

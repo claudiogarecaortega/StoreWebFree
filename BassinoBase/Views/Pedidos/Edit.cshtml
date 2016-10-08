@@ -1,0 +1,30 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@model BassinoLibrary.ViewModels.PedidosViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Edit, "Pedidos"))
+}
+
+<fieldset>
+
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.UsuarioId)
+    @Html.PersonalTextAreaFor(model => model.Descripcion, "Descripcion", 3, true)
+    @Html.PersonalSEditorFor(model => model.Referencia)
+
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

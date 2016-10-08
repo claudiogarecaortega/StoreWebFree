@@ -1,0 +1,69 @@
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.StockViewModel
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("Historial y seguimiento del Stock"))
+}
+
+
+<ul class="timeline">
+    @{
+        foreach (var item in Model.Tracks)
+        {
+            <!-- timeline time label -->
+            <li class="time-label">
+                @if (item.EsIngreso)
+                {
+                    <span class="bg-blue">
+                        @Convert.ToDateTime(item.DateCreate).ToShortDateString()
+                    </span>
+                }
+                else
+                {
+                    <span class="bg-red">
+                        @Convert.ToDateTime(item.DateCreate).ToShortDateString()
+                    </span>
+                }
+
+            </li>
+            <!-- /.timeline-label -->
+            <!-- timeline item -->
+            <li>
+                <!-- timeline icon -->
+                @if (item.EsIngreso)
+                {
+                    <i class="fa fa-truck bg-blue"></i>
+                }
+                else
+                {
+                    <i class="fa fa-plane bg-red"></i>
+                }
+                <div class="timeline-item">
+                    <span class="time"><i class="fa fa-clock-o"></i> @Convert.ToDateTime(item.DateCreate).ToShortTimeString()</span>
+
+                    <h3 class="timeline-header">
+                        <a href="#">@item.Stock.Descripcion</a> ...
+                    </h3>
+
+                    <div class="timeline-body">
+                        @item.Stock.Producto.Description
+                    </div>
+
+                    <div class="timeline-footer">
+                        <a class="btn btn-primary btn-xs">...</a>
+                    </div>
+                </div>
+            </li>
+            <!-- END timeline item -->
+        }
+    }
+
+</ul>
+@section Footer
+    {
+    @Helpers.BotonClose()
+}

@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B015DEF4-3B7C-45DF-891B-97EB6D6AE26E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Domain</RootNamespace>
+    <AssemblyName>Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Almacen\Almacen.cs" />
+    <Compile Include="Almacen\MovimientosStock.cs" />
+    <Compile Include="Almacen\Stock.cs" />
+    <Compile Include="Clients\Client.cs" />
+    <Compile Include="Commodity\Inbound.cs" />
+    <Compile Include="Commodity\InboundTracking.cs" />
+    <Compile Include="Contable\Bancaria.cs" />
+    <Compile Include="Contable\Credito.cs" />
+    <Compile Include="Contable\CuentasCobrar.cs" />
+    <Compile Include="Contable\CuentasPagar.cs" />
+    <Compile Include="Contable\Cuotas.cs" />
+    <Compile Include="IdentificableObject\IIdentifiableObject.cs" />
+    <Compile Include="IdentificableObject\IStringIdentificableObject.cs" />
+    <Compile Include="Misc\Alert.cs" />
+    <Compile Include="Misc\Bill.cs" />
+    <Compile Include="Misc\BillType.cs" />
+    <Compile Include="Misc\Car.cs" />
+    <Compile Include="Misc\Categoria.cs" />
+    <Compile Include="Misc\Contract.cs" />
+    <Compile Include="Misc\ContractTemplate.cs" />
+    <Compile Include="Misc\Empresa.cs" />
+    <Compile Include="Misc\Etiquetas.cs" />
+    <Compile Include="Misc\MeasureUnit.cs" />
+    <Compile Include="Misc\Messaging.cs" />
+    <Compile Include="Misc\Notification.cs" />
+    <Compile Include="Misc\PackageType.cs" />
+    <Compile Include="Misc\Services.cs" />
+    <Compile Include="Misc\TaxCondition.cs" />
+    <Compile Include="Misc\Ubication.cs" />
+    <Compile Include="Misc\UserAlert.cs" />
+    <Compile Include="Misc\UserNotification.cs" />
+    <Compile Include="Products\Comentarios.cs" />
+    <Compile Include="Products\Imagenes.cs" />
+    <Compile Include="Products\Preguntas.cs" />
+    <Compile Include="Products\Product.cs" />
+    <Compile Include="Products\Promociones.cs" />
+    <Compile Include="Products\Shipment.cs" />
+    <Compile Include="Products\ShipmentTrack.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\PedidosProducto.cs" />
+    <Compile Include="Providers\Provider.cs" />
+    <Compile Include="Security\Actions.cs" />
+    <Compile Include="Security\Module.cs" />
+    <Compile Include="Security\ModuleActions.cs" />
+    <Compile Include="Security\ModuleUserActions.cs" />
+    <Compile Include="Security\Roles.cs" />
+    <Compile Include="Users\ApplicationUser.cs" />
+    <Compile Include="Users\UserExtended.cs" />
+    <Compile Include="Ventas\Pedidos.cs" />
+    <Compile Include="Ventas\Venta.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

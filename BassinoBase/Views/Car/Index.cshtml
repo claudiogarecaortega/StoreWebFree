@@ -1,0 +1,49 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+
+@using BassinoLibrary.ViewModels
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@using BassinoLibrary.ViewModels
+
+
+<script>
+
+    $(document).ready(function () {
+        $("#filterText").keyup(function (e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        updateTitle("Camiones", "Gestion General");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function () {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+
+</script>
+@Helpers.Buscador()
+@Helpers.BotonesActiones(ViewBag.crear,ViewBag.editar, ViewBag.borrar, ViewBag.ver, "Car")
+
+@(Html.KendoGrid().Grid<CarViewModel, CarController>(GridDetailsMode.None)
+      .Name("GridCar")
+      .Columns(columns =>
+      {
+          columns.Template(@<text></text>).Width(50).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>");
+          columns.Bound(p => p.Secuencia).Template(@<text></text>).Title("N° de Camion");
+          columns.Bound(p => p.Nombre);      
+          columns.Bound(p => p.Description);
+          columns.Bound(p => p.Patente);
+          
+      })
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Model(conf => conf.Id(model => model.Id))
+          .PageSize(20)
+          .Read(read => read.Action("GridInfo", "Car").Data("additionalParameters"))
+      ))

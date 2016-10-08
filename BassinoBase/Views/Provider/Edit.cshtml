@@ -1,0 +1,73 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@using Domain.Misc
+
+@model BassinoLibrary.ViewModels.ProviderViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Edit, Resources.Provider))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+
+	@Html.HiddenFor(model => model.Id)
+    @Html.PersonalSEditorFor(model => model.Name)
+    @Html.PersonalSEditorFor(model => model.Alias)
+    @Html.PersonalSEditorFor(model => model.Direction)
+    @(Html.AutocompleteFor<ProviderViewModel, int?>(model => model.Ubication)
+          .TextField<UbicationViewModel>(diag => diag.DescriptionCompleta)
+          .ValueField<UbicationViewModel>(diag => diag.Id)
+          .Id(model => model.UbicationId)
+          .Source("GetAutoComplete", "Ubication"))
+
+
+    @Html.PersonalSEditorFor(model => model.ZipCode)
+    @Html.PersonalSEditorFor(model => model.NameContact)
+    @Html.PersonalSEditorFor(model => model.PhoneContact)
+    @Html.PersonalSEditorFor(model => model.MailContact)
+    @(Html.ComboFor(model => model.TaxConditionId)
+              .TextField<TaxCondition>(codigoAtc => codigoAtc.Description)
+                      .ValueField<TaxCondition>(codigoAtc => codigoAtc.Id)
+              .Label()
+            .SelectedValue(Convert.ToInt32(Model.TaxConditionId))
+              .ValidationMessage()
+                              .Values(ViewBag.Providers)
+    )
+    @Html.PersonalSEditorFor(model => model.IiBb)
+    @Html.PersonalSEditorFor(model => model.Cuit)
+    <label id="CuitError"></label>
+    @Html.PersonalTextAreaFor(model => model.Description, "", 6, true)
+</fieldset>
+<script>
+    $(document).ready(function () {
+        $("#Cuit").mask("99-99999999-9");
+        $("#Cuit").blur(function () {
+
+            var cui = $("#Cuit").val();
+            var cuit = cui.replace('-', '').replace('-', '');
+            if (!validaCuit(cuit)) {
+                $("#Cuit").css('border-color', 'red');
+                $("#CuitError").css('color', 'red');
+                $("#CuitError").text("el cuit es incorrecto");
+
+            }else{
+                $("#Cuit").css('border-color', '');
+                $("#CuitError").css('color', '');
+                $("#CuitError").text("");
+                    }
+        });
+    });
+</script>
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

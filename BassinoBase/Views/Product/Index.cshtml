@@ -1,0 +1,49 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Interfaz.Controllers
+@using BassinoLibrary.ViewModels
+
+@*Helpers.BotonCreateUrl("Product/Create", "Crear Nuevo", (bool)ViewBag.crear, (bool)ViewBag.imprimir, "Exportar Todos los Productos", "Report/PrintAllProducts")*@
+
+
+<script>
+
+    $(document).ready(function() {
+        $("#filterText").keyup(function (e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        updateTitle("Productos", "Gestion General");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+   
+</script>
+@Helpers.Buscador()
+@Helpers.BotonesActionesProducto(true, true, true, true,true, "Product")
+@(Html.KendoGrid().Grid<ProductViewModel, ProductController>(GridDetailsMode.None)
+    .Name("GridProduct")
+        .Scrollable(scr => scr.Height(390))
+
+    .Columns(columns =>
+    {
+        columns.Template(@<text></text>).Width(50).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>");
+        columns.Bound(p => p.Secuencia);
+        columns.Bound(p => p.Description);
+        columns.Bound(p => p.DescriptionCold).Title("Necesita Frio?");
+        @*columns.Template(@<text></text>).HtmlAttributes(new { @class = "acciones" }).Width(300).ClientTemplate(@Html.Partial("_GridAcctions").ToString())
+              .HtmlAttributes(new { @style = "overflow: visible;" }).Width("auto");*@
+	    })
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(conf => conf.Id(model => model.Id))
+        .PageSize(10)
+            .Read(read => read.Action("GridInfo", "Product").Data("additionalParameters"))
+    )
+)

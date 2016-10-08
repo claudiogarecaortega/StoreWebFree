@@ -1,0 +1,32 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.BancariaViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, "Bancaria"))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.PersonalSEditorFor(model => model.Entidad)
+	@Html.PersonalSEditorFor(model => model.Alias)
+	@Html.PersonalSEditorFor(model => model.NumeroCuenta)
+	@Html.CheckBoxPersonal(model => model.Egresos)
+	@Html.CheckBoxPersonal(model => model.Ingresos)
+	@Html.CheckBoxPersonal(model => model.Principal)
+	@Html.PersonalSEditorFor(model => model.Saldo)
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

@@ -1,0 +1,45 @@
+@using BassinoBase.Controllers
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Interfaz.Controllers
+@using BassinoLibrary.ViewModels
+@*Helpers.BotonCreateUrl("Provider/Create", "Crear Nuevo Proveedor", (bool)ViewBag.crear, (bool)ViewBag.imprimir, "Imprimir Todos los Proveedor", "Report/PrintAllPproviders")*@
+
+
+<script>
+
+    $(document).ready(function() {
+        $("#filterText").keyup(function(e) {
+            if (e.which == 13)
+                RefrescarGrilla();
+        });
+        updateTitle("Proveedor", "Gestion General");
+    });
+
+    function RefrescarGrilla() {
+        $(".k-grid").each(function() {
+            $(this).data("kendoGrid").dataSource.page(1);
+            $(this).data("kendoGrid").dataSource.read();
+        });
+    }
+
+
+</script>
+@Helpers.Buscador()
+@Helpers.BotonesActiones(true, true, true, true, "Provider")
+@(Html.KendoGrid().Grid<ProviderViewModel, ProviderController>(GridDetailsMode.None)
+      .Name("GridProvider")
+      .Columns(columns =>
+      {
+          columns.Template(@<text></text>).Width(50).ClientTemplate("<input type='checkbox' onClick='disableOnChecked(#= id #)' name='actions' class='chkbx' value='#= id #' id='#= id #'/>");
+          columns.Bound(p => p.Secuencia).Template(@<text></text>).Title("N° de Proveedor");
+          columns.Bound(p => p.Name);
+          columns.Bound(p => p.PhoneContact);
+      })
+
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Model(conf => conf.Id(model => model.Id))
+          .PageSize(10)
+          .Read(read => read.Action("GridInfo", "Provider").Data("additionalParameters"))
+      ))

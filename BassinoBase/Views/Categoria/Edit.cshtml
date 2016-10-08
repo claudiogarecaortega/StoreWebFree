@@ -1,0 +1,28 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+
+@model BassinoLibrary.ViewModels.CategoriaViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Edit, "Categorias"))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+
+	@Html.HiddenFor(model => model.Id)
+
+	@Html.PersonalSEditorFor(model => model.Descripcion)
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

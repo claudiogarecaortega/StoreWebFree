@@ -1,0 +1,122 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using Domain.Misc
+@using Domain.Providers
+@model BassinoLibrary.ViewModels.ProductViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "ProductViewModel", Model.Id, string.Format("{0} {1}", Resources.Details, Resources.Product))
+}
+
+
+<fieldset>
+
+	@Html.HiddenFor(model => model.Id)
+
+	@Html.PersonalDisplayFor(model => model.Nombre)
+	@Html.PersonalDisplayFor(model => model.Description)
+    @Html.PersonalDisplayFor(model => model.Precio)
+    
+    @Html.PersonalDisplayFor(model => model.Categorias)
+    @Html.PersonalDisplayFor(model => model.Etiquetas)
+    @Html.LabelFor(model => model.IsPrincipal)
+    @{
+        if (Model.IsPrincipal)
+        {
+            <div>
+                <em>Si</em>
+            </div>
+        }
+        else
+        {
+            <div>
+                <em>No</em>
+            </div>
+        }
+}
+    @Html.Label("Imagenes del Producto")
+    @{
+        if (ViewBag.imagenesAny)
+        {
+            <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    @{
+            int i = 0;
+            foreach (var VARIABLE in ViewBag.imagenes)
+            {
+                if (i == 0)
+                {
+                    <li data-target="#myCarousel" data-slide-to="@i" class="active"></li>
+                }
+                else
+                {
+                    <li data-target="#myCarousel" data-slide-to="@i"></li>
+                }
+                i++;
+
+            }
+                    }
+
+                </ol>
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner" role="listbox">
+                    @{
+            int iw = 0;
+            var filename = "";
+            foreach (var item in ViewBag.imagenes)
+            {
+                filename = "400x400" + item.FileName;
+                if (iw == 0)
+                {
+
+                    <div class="item active">
+                        <img src="/Content/Images/@filename" alt="Chania" style="margin: auto;">
+                    </div>
+                }
+                else
+                {
+                    <div class="item">
+                        <img src="/Content/Images/@filename" alt="Chania" style="margin: auto;">
+                    </div>
+                }
+                iw++;
+            }
+                    }
+                </div>
+
+                <!-- Left and right controls -->
+                <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        }
+        else
+        { <div>
+              <em>Aun no se han Cargado Imagenes</em>
+        </div>
+            
+        }
+    }
+    
+    <script>
+    $(document).ready(function () {
+        $('.carousel').carousel();
+    });
+
+    </script>
+    
+</fieldset>
+
+

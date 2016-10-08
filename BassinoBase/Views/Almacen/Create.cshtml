@@ -1,0 +1,36 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@using BassinoLibrary.ViewModels
+@model BassinoLibrary.ViewModels.AlmacenViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+    ViewBag.Action = "Create";
+}
+
+@section Header
+{
+    @Helpers.ModalHeader(string.Format("{0} {1}", Resources.Create, "Almacen"))
+}
+
+<fieldset>
+
+	@Html.ValidationSummary(true)
+    @Html.PersonalSEditorFor(model => model.Nombre)
+	@Html.PersonalTextAreaFor(model => model.Descripcion,"Descripcion",3)
+	
+	@Html.PersonalSEditorFor(model => model.Calle)
+	@Html.PersonalSEditorFor(model => model.Numero)
+	@Html.PersonalSEditorFor(model => model.CodigoPostal)
+    @(Html.AutocompleteFor<AlmacenViewModel, int?>(model => model.Ubicacion)
+          .TextField<UbicationViewModel>(diag => diag.DescriptionCompleta)
+          .ValueField<UbicationViewModel>(diag => diag.Id)
+          .Id(model => model.UbicacionId)
+          .Source("GetAutoComplete", "Ubication"))
+
+</fieldset>
+
+@section Footer
+{
+    @Helpers.BotonesGuardarCancelarModal()
+}

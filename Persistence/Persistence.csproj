@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{37206E09-6981-4DD3-987B-A673B6E18B57}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Persistence</RootNamespace>
+    <AssemblyName>Persistence</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApplicationDbContext.cs" />
+    <Compile Include="Dao\ActionsDao.cs" />
+    <Compile Include="Dao\AlertDao.cs" />
+    <Compile Include="Dao\AlmacenDao.cs" />
+    <Compile Include="Dao\BancariaDao.cs" />
+    <Compile Include="Dao\BillDao.cs" />
+    <Compile Include="Dao\BillTypeDao.cs" />
+    <Compile Include="Dao\CarDao.cs" />
+    <Compile Include="Dao\CategoriaDao.cs" />
+    <Compile Include="Dao\ClientDao.cs" />
+    <Compile Include="Dao\ComentariosDao.cs" />
+    <Compile Include="Dao\ContractDao.cs" />
+    <Compile Include="Dao\ContractTemplateDao.cs" />
+    <Compile Include="Dao\CreditoDao.cs" />
+    <Compile Include="Dao\CuentasCobrarDao.cs" />
+    <Compile Include="Dao\CuentasPagarDao.cs" />
+    <Compile Include="Dao\CuotasDao.cs" />
+    <Compile Include="Dao\Dao.cs" />
+    <Compile Include="Dao\EmpresaDao.cs" />
+    <Compile Include="Dao\EtiquetasDao.cs" />
+    <Compile Include="Dao\ImagenesDao.cs" />
+    <Compile Include="Dao\InboundDao.cs" />
+    <Compile Include="Dao\InboundtrackingDao.cs" />
+    <Compile Include="Dao\Interfaces\IActionsDao.cs" />
+    <Compile Include="Dao\Interfaces\IAlertDao.cs" />
+    <Compile Include="Dao\Interfaces\IAlmacenDao.cs" />
+    <Compile Include="Dao\Interfaces\IBancariaDao.cs" />
+    <Compile Include="Dao\Interfaces\IBillDao.cs" />
+    <Compile Include="Dao\Interfaces\IBillTypeDao.cs" />
+    <Compile Include="Dao\Interfaces\ICarDao.cs" />
+    <Compile Include="Dao\Interfaces\ICategoriaDao.cs" />
+    <Compile Include="Dao\Interfaces\IClientDao.cs" />
+    <Compile Include="Dao\Interfaces\IComentariosDao.cs" />
+    <Compile Include="Dao\Interfaces\IContractDao.cs" />
+    <Compile Include="Dao\Interfaces\IContractTemplateDao.cs" />
+    <Compile Include="Dao\Interfaces\ICreditoDao.cs" />
+    <Compile Include="Dao\Interfaces\ICuentasCobrarDao.cs" />
+    <Compile Include="Dao\Interfaces\ICuentasPagarDao.cs" />
+    <Compile Include="Dao\Interfaces\ICuotasDao.cs" />
+    <Compile Include="Dao\Interfaces\IDao.cs" />
+    <Compile Include="Dao\Interfaces\IDaoDependence.cs" />
+    <Compile Include="Dao\Interfaces\IEmpresaDao.cs" />
+    <Compile Include="Dao\Interfaces\IEtiquetasDao.cs" />
+    <Compile Include="Dao\Interfaces\IImagenesDao.cs" />
+    <Compile Include="Dao\Interfaces\IInboundDao.cs" />
+    <Compile Include="Dao\Interfaces\IInboundtrackingDao.cs" />
+    <Compile Include="Dao\Interfaces\IMeasureUnitDao.cs" />
+    <Compile Include="Dao\Interfaces\IMessagingDao.cs" />
+    <Compile Include="Dao\Interfaces\IModuleDao.cs" />
+    <Compile Include="Dao\Interfaces\IMovimientosStockDao.cs" />
+    <Compile Include="Dao\Interfaces\INotificationDao.cs" />
+    <Compile Include="Dao\Interfaces\IPackageTypeDao.cs" />
+    <Compile Include="Dao\Interfaces\IPedidosDao.cs" />
+    <Compile Include="Dao\Interfaces\IPedidosProductoDao.cs" />
+    <Compile Include="Dao\Interfaces\IPreguntasDao.cs" />
+    <Compile Include="Dao\Interfaces\IProductDao.cs" />
+    <Compile Include="Dao\Interfaces\IPromocionesDao.cs" />
+    <Compile Include="Dao\Interfaces\IProviderDao.cs" />
+    <Compile Include="Dao\Interfaces\IRolesDao.cs" />
+    <Compile Include="Dao\Interfaces\IServicesDao.cs" />
+    <Compile Include="Dao\Interfaces\IShipmentDao.cs" />
+    <Compile Include="Dao\Interfaces\IShipmentTrackDao.cs" />
+    <Compile Include="Dao\Interfaces\IStockDao.cs" />
+    <Compile Include="Dao\Interfaces\ITaxConditionDao.cs" />
+    <Compile Include="Dao\Interfaces\IUbicationDao.cs" />
+    <Compile Include="Dao\Interfaces\IUserExtended.cs" />
+    <Compile Include="Dao\Interfaces\IVentaDao.cs" />
+    <Compile Include="Dao\MeasureUnitDao.cs" />
+    <Compile Include="Dao\MessagingDao.cs" />
+    <Compile Include="Dao\ModuleDao.cs" />
+    <Compile Include="Dao\MovimientosStockDao.cs" />
+    <Compile Include="Dao\NotificationDao.cs" />
+    <Compile Include="Dao\PackageTypeDao.cs" />
+    <Compile Include="Dao\PedidosDao.cs" />
+    <Compile Include="Dao\PedidosProductoDao.cs" />
+    <Compile Include="Dao\PreguntasDao.cs" />
+    <Compile Include="Dao\ProductDao.cs" />
+    <Compile Include="Dao\PromocionesDao.cs" />
+    <Compile Include="Dao\ProviderDao.cs" />
+    <Compile Include="Dao\RolesDao.cs" />
+    <Compile Include="Dao\ServicesDao.cs" />
+    <Compile Include="Dao\ShipmentDao.cs" />
+    <Compile Include="Dao\ShipmentTrackDao.cs" />
+    <Compile Include="Dao\StockDao.cs" />
+    <Compile Include="Dao\TaxConditionDao.cs" />
+    <Compile Include="Dao\UbicationDao.cs" />
+    <Compile Include="Dao\UserDao.cs" />
+    <Compile Include="Dao\VentaDao.cs" />
+    <Compile Include="IApplicationDbContext.cs" />
+    <Compile Include="Mappers\ActionsMap.cs" />
+    <Compile Include="Mappers\AlertMap.cs" />
+    <Compile Include="Mappers\AlmacenMap.cs" />
+    <Compile Include="Mappers\BancariaMap.cs" />
+    <Compile Include="Mappers\BillMap.cs" />
+    <Compile Include="Mappers\BillTypeMap.cs" />
+    <Compile Include="Mappers\CarMap.cs" />
+    <Compile Include="Mappers\CategoriaMap.cs" />
+    <Compile Include="Mappers\ClientMap.cs" />
+    <Compile Include="Mappers\ComentariosMap.cs" />
+    <Compile Include="Mappers\ContractMap.cs" />
+    <Compile Include="Mappers\ContractTemplateMap.cs" />
+    <Compile Include="Mappers\CreditoMap.cs" />
+    <Compile Include="Mappers\CuentasCobrarMap.cs" />
+    <Compile Include="Mappers\CuentasPagarMap.cs" />
+    <Compile Include="Mappers\CuotasMap.cs" />
+    <Compile Include="Mappers\EmpresaMap.cs" />
+    <Compile Include="Mappers\EtiquetasMap.cs" />
+    <Compile Include="Mappers\ImagenesMap.cs" />
+    <Compile Include="Mappers\InboundMap.cs" />
+    <Compile Include="Mappers\InboundtrackingMap.cs" />
+    <Compile Include="Mappers\MeasureUnitMap.cs" />
+    <Compile Include="Mappers\MessagingMap.cs" />
+    <Compile Include="Mappers\ModuleActionsMap.cs" />
+    <Compile Include="Mappers\ModuleMap.cs" />
+    <Compile Include="Mappers\ModuleUserActionsMap.cs" />
+    <Compile Include="Mappers\MovimientosStockMap.cs" />
+    <Compile Include="Mappers\NotificationMap.cs" />
+    <Compile Include="Mappers\PackageTypeMap.cs" />
+    <Compile Include="Mappers\PedidosMap.cs" />
+    <Compile Include="Mappers\PedidosProductoMap.cs" />
+    <Compile Include="Mappers\PreguntasMap.cs" />
+    <Compile Include="Mappers\ProductMap.cs" />
+    <Compile Include="Mappers\PromocionesMap.cs" />
+    <Compile Include="Mappers\ProviderMap.cs" />
+    <Compile Include="Mappers\RolesMap.cs" />
+    <Compile Include="Mappers\ServicesMap.cs" />
+    <Compile Include="Mappers\ShipmentMap.cs" />
+    <Compile Include="Mappers\ShipmentTrackMap.cs" />
+    <Compile Include="Mappers\StockMap.cs" />
+    <Compile Include="Mappers\TaxConditionMap.cs" />
+    <Compile Include="Mappers\UbicationMap.cs" />
+    <Compile Include="Mappers\VentaMap.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitsOfWork\IUnitOfWorkHelper.cs" />
+    <Compile Include="UnitsOfWork\UnitOfWorkHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{b015def4-3b7c-45df-891b-97eb6d6ae26e}</Project>
+      <Name>Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{72e00fb7-08b8-44b9-b819-8ccd78ec40b3}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

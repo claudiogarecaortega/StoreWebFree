@@ -1,0 +1,21 @@
+@using BassinoLibrary.Helpers
+@using BassinoLibrary.Resource
+@model BassinoLibrary.ViewModels.EtiquetasViewModel
+
+@{
+    Layout = "~/Views/Shared/_ModalLayout.cshtml";
+}
+
+@section Header
+{
+    @Helpers.ModalHeaderDetails(this, "Etiquetas", Model.Id, string.Format("{0} {1}", Resources.Details, "Etiqueta"))
+}
+
+
+<fieldset>
+
+	@Html.PersonalDisplayFor(model => model.Descripcion)
+
+</fieldset>
+
+
